@@ -393,7 +393,7 @@ export default function Welcome() {
                                     Premium
                                 </h3>
                                 <div className="flex items-baseline gap-2 mb-3">
-                                    <span className="text-4xl lg:text-5xl font-bold text-white">₱300</span>
+                                    <span className="text-4xl lg:text-5xl font-bold text-white">₱199</span>
                                     <span className="text-white/80 text-lg">/month</span>
                                 </div>
                                 <p className="text-white/90 text-sm">

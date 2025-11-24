@@ -1,9 +1,9 @@
 import ModuleHeading from "@/components/module-heading";
 import AppLayout from "@/layouts/app-layout";
 import { Head, Link } from "@inertiajs/react";
-import { Sparkles, ArrowLeft, Edit, QrCode } from 'lucide-react';
+import { Sparkles, ArrowLeft, Edit, Bell, ChevronDown, Plus, MoreVertical } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 
 export default function Show({ cardTemplate }) {
   const getPerkForStamp = (stampNumber) => {
@@ -17,7 +17,7 @@ export default function Show({ cardTemplate }) {
 
     const shapes = {
       circle: (
-        <svg width="80" height="80" viewBox="0 0 100 100" className="drop-shadow-lg transition-all duration-300 hover:scale-110 w-full h-full">
+        <svg width="100%" height="100%" viewBox="0 0 100 100">
           <defs>
             {stampImageUrl && (
               <pattern id="stampPattern" x="0" y="0" width="1" height="1">
@@ -25,11 +25,11 @@ export default function Show({ cardTemplate }) {
               </pattern>
             )}
           </defs>
-          <circle cx="50" cy="50" r="45" fill={stampImageUrl && isFilled ? "url(#stampPattern)" : fillColor} stroke={strokeColor} strokeWidth="3" />
+          <circle cx="50" cy="50" r="45" fill={stampImageUrl && isFilled ? "url(#stampPattern)" : fillColor} stroke={strokeColor} strokeWidth="2" />
         </svg>
       ),
       star: (
-        <svg width="80" height="80" viewBox="0 0 100 100" className="drop-shadow-lg transition-all duration-300 hover:scale-110 w-full h-full">
+        <svg width="100%" height="100%" viewBox="0 0 100 100">
           <defs>
             {stampImageUrl && (
               <pattern id="stampPattern" x="0" y="0" width="1" height="1">
@@ -41,12 +41,12 @@ export default function Show({ cardTemplate }) {
             d="M50 5 L55 20 L70 15 L70 30 L85 35 L75 47 L85 59 L70 64 L70 79 L55 74 L50 89 L45 74 L30 79 L30 64 L15 59 L25 47 L15 35 L30 30 L30 15 L45 20 Z"
             fill={stampImageUrl && isFilled ? "url(#stampPattern)" : fillColor}
             stroke={strokeColor}
-            strokeWidth="3"
+            strokeWidth="2"
           />
         </svg>
       ),
       square: (
-        <svg width="80" height="80" viewBox="0 0 100 100" className="drop-shadow-lg transition-all duration-300 hover:scale-110 w-full h-full">
+        <svg width="100%" height="100%" viewBox="0 0 100 100">
           <defs>
             {stampImageUrl && (
               <pattern id="stampPattern" x="0" y="0" width="1" height="1">
@@ -54,11 +54,11 @@ export default function Show({ cardTemplate }) {
               </pattern>
             )}
           </defs>
-          <rect x="10" y="10" width="80" height="80" rx="12" fill={stampImageUrl && isFilled ? "url(#stampPattern)" : fillColor} stroke={strokeColor} strokeWidth="3" />
+          <rect x="10" y="10" width="80" height="80" rx="12" fill={stampImageUrl && isFilled ? "url(#stampPattern)" : fillColor} stroke={strokeColor} strokeWidth="2" />
         </svg>
       ),
       hexagon: (
-        <svg width="80" height="80" viewBox="0 0 100 100" className="drop-shadow-lg transition-all duration-300 hover:scale-110 w-full h-full">
+        <svg width="100%" height="100%" viewBox="0 0 100 100">
           <defs>
             {stampImageUrl && (
               <pattern id="stampPattern" x="0" y="0" width="1" height="1">
@@ -70,38 +70,25 @@ export default function Show({ cardTemplate }) {
             d="M50 5 L90 27.5 L90 72.5 L50 95 L10 72.5 L10 27.5 Z"
             fill={stampImageUrl && isFilled ? "url(#stampPattern)" : fillColor}
             stroke={strokeColor}
-            strokeWidth="3"
+            strokeWidth="2"
           />
         </svg>
       )
     };
 
     return (
-      <div className="relative group">
+      <div className="relative w-full h-full">
         {shapes[shape]}
         {isReward && (
           <div className="absolute inset-0 flex items-center justify-center">
-            <span className="text-white font-bold text-xs text-center px-1 leading-tight drop-shadow-lg" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8)' }}>
+            <span className="text-white font-bold text-[8px] text-center px-1 leading-tight drop-shadow-lg" style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.8)' }}>
               {rewardText}
             </span>
           </div>
         )}
         {isFilled && !isReward && !stampImageUrl && (
           <div className="absolute inset-0 flex items-center justify-center">
-            <Sparkles size={24} className="text-white animate-pulse" />
-          </div>
-        )}
-        {/* Hover Tooltip for Details */}
-        {isReward && details && (
-          <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-10">
-            <div className="bg-gray-900 text-white text-sm rounded-lg py-2 px-4 shadow-xl whitespace-nowrap max-w-[250px] text-center">
-              <div className="font-bold mb-1">{rewardText}</div>
-              <div className="text-gray-300 text-xs">{details}</div>
-              {/* Arrow */}
-              <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
-                <div className="border-4 border-transparent border-t-gray-900"></div>
-              </div>
-            </div>
+            <Sparkles size={16} className="text-white animate-pulse" />
           </div>
         )}
       </div>
@@ -111,41 +98,73 @@ export default function Show({ cardTemplate }) {
   const logoUrl = cardTemplate.logo ? `/${cardTemplate.logo}` : null;
   const backgroundImageUrl = cardTemplate.backgroundImage ? `/${cardTemplate.backgroundImage}` : null;
 
+  // Sample customer name - in real app this would come from auth
+  const customerName = "Customer Name";
+  const totalStamps = 0; // Customer starts with 0 stamps
+
   return (
     <AppLayout>
-      <Head title={`${cardTemplate.heading} - Card Template`} />
+      <Head title={`${cardTemplate.heading}`} />
       <ModuleHeading 
         title="Card Template Preview" 
-        description="This is how customers will see your loyalty card"
+        description="Customer view of the loyalty card"
       />
 
-      <div className="mt-6 md:mt-8 lg:mt-10">
-        {/* Action Buttons */}
-        <div className="flex flex-wrap items-center gap-3 mb-6">
+      {/* Mobile App Style Container */}
+      <div className="max-w-md mx-auto mt-6">
+        {/* Back Button */}
+        <div className="mb-4">
           <Link href="/business/card-templates">
-            <Button variant="outline" size="sm">
+            <Button variant="ghost" size="sm" className="text-gray-400">
               <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Templates
+              Back
             </Button>
           </Link>
-          <Link href={`/business/card-templates/${cardTemplate.id}/edit`}>
-            <Button size="sm">
-              <Edit className="mr-2 h-4 w-4" />
-              Edit Template
-            </Button>
-          </Link>
-          <Button variant="outline" size="sm">
-            <QrCode className="mr-2 h-4 w-4" />
-            Generate QR Code
-          </Button>
         </div>
 
-        {/* Card Display */}
-        <div className="flex justify-center items-center min-h-[70vh] py-8">
-          <Card className="w-full max-w-2xl overflow-hidden shadow-2xl">
-            <CardContent className="p-0">
-              <div
-                className="rounded-xl overflow-hidden transform hover:scale-[1.02] transition-transform duration-300"
+        {/* Main Phone-like Container */}
+        <div className="bg-white rounded-[3rem] p-6 shadow-2xl border-8 border-gray-800 min-h-[800px]">
+          {/* Header */}
+          <div className="flex items-start justify-between mb-6">
+            <div>
+              <p className="text-gray-700 text-sm mb-1">Good afternoon</p>
+              <h1 className="text-black text-2xl font-bold">Customer</h1>
+            </div>
+            <div className="flex gap-3">
+              <div className="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center">
+                <span className="text-white text-sm font-semibold">
+                  {customerName.charAt(0)}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Total Stamps Section */}
+          <div className="border shadow-lg rounded-2xl p-6 mb-6">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <div className="flex items-center gap-2 text-gray-900 text-sm mb-2">
+                  <span>Total Stamps Accumulated</span>
+                </div>
+                <div className="text-black text-4xl font-bold">
+                  {totalStamps} <span className="text-gray-500">/ {cardTemplate.stampsNeeded}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Progress Bar */}
+            <div className="w-full bg-gray-700 rounded-full h-2">
+              <div 
+                className="bg-gradient-to-r from-purple-500 to-pink-500 h-2 rounded-full transition-all duration-500"
+                style={{ width: `${(totalStamps / cardTemplate.stampsNeeded) * 100}%` }}
+              ></div>
+            </div>
+          </div>
+
+             {/* The Loyalty Card */}
+
+       <div
+                className="rounded-lg  shadow-2xl mb-5 overflow-hidden"
                 style={{
                   backgroundColor: cardTemplate.backgroundColor,
                   backgroundImage: backgroundImageUrl ? `url(${backgroundImageUrl})` : 'none',
@@ -153,45 +172,44 @@ export default function Show({ cardTemplate }) {
                   backgroundPosition: 'center'
                 }}
               >
-                <div className="p-8 sm:p-10 md:p-12 lg:p-16 backdrop-blur-sm" style={{ backgroundColor: backgroundImageUrl ? 'rgba(0,0,0,0.2)' : 'transparent' }}>
+                <div className="p-6 backdrop-blur-sm" style={{ backgroundColor: backgroundImageUrl ? 'rgba(0,0,0,0.2)' : 'transparent' }}>
                   {/* Logo */}
                   {logoUrl && (
-                    <div className="flex justify-center mb-6">
+                    <div className="flex justify-center mb-4">
                       <img 
                         src={logoUrl} 
                         alt="Logo" 
-                        className="h-24 w-24 sm:h-28 sm:w-28 md:h-32 md:w-32 object-cover rounded-full border-4 border-white shadow-2xl" 
+                        className="h-16 w-16 object-cover rounded-full border-3 border-white shadow-xl" 
                       />
                     </div>
                   )}
 
                   {/* Heading */}
-                  <h1
-                    className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-3 tracking-wider"
+                  <h3
+                    className="text-xl font-bold text-center mb-1 tracking-wider"
                     style={{ color: cardTemplate.textColor }}
                   >
                     {cardTemplate.heading}
-                  </h1>
+                  </h3>
 
                   {/* Subheading */}
                   <p
-                    className="text-center text-base sm:text-lg md:text-xl mb-10 opacity-90"
+                    className="text-center text-xs mb-5 opacity-90"
                     style={{ color: cardTemplate.textColor }}
                   >
                     {cardTemplate.subheading}
                   </p>
 
                   {/* Stamps Grid */}
-                  <div className="grid grid-cols-5 gap-4 md:gap-5 lg:gap-6 mb-8 md:mb-10">
+                  <div className="grid grid-cols-5 gap-2 mb-4"> 
                     {Array.from({ length: cardTemplate.stampsNeeded }).map((_, index) => {
                       const stampNumber = index + 1;
                       const perk = getPerkForStamp(stampNumber);
-                      // Show empty stamps in preview (customer view starts with 0 stamps)
-                      const isFilled = false;
+                      const isFilled = index < totalStamps;
                       
                       return (
-                        <div key={index} className="flex flex-col items-center gap-2">
-                          <div className="w-16 h-16 sm:w-18 sm:h-18 md:w-20 md:h-20">
+                        <div key={index} className="flex flex-col items-center gap-1">
+                          <div className="w-10 h-10">
                             <StampShape
                               shape={cardTemplate.stampShape}
                               isFilled={isFilled}
@@ -201,7 +219,7 @@ export default function Show({ cardTemplate }) {
                               details={perk?.details}
                             />
                           </div>
-                          <span className="text-xs sm:text-sm md:text-base font-medium" style={{ color: cardTemplate.textColor }}>
+                          <span className="text-[9px] font-medium" style={{ color: cardTemplate.textColor }}>
                             {stampNumber}
                           </span>
                         </div>
@@ -210,44 +228,16 @@ export default function Show({ cardTemplate }) {
                   </div>
 
                   {/* Mechanics */}
-                  <div className="bg-white/95 backdrop-blur rounded-xl p-5 md:p-6 mb-6 md:mb-8 shadow-lg">
-                    <h3 className="text-sm font-semibold text-gray-900 mb-2 text-center">How it Works</h3>
-                    <p className="text-xs sm:text-sm md:text-base text-gray-800 text-center leading-relaxed">
+                  <div className="bg-white/95 backdrop-blur rounded-lg p-3 mb-3 shadow-lg">
+                    <p className="text-[10px] text-gray-800 text-center leading-relaxed">
                       {cardTemplate.mechanics}
                     </p>
                   </div>
 
-                  {/* Rewards Summary */}
-                  {cardTemplate.perks && cardTemplate.perks.length > 0 && (
-                    <div className="bg-white/90 backdrop-blur rounded-xl p-5 md:p-6 mb-6 md:mb-8 shadow-lg">
-                      <h3 className="text-sm font-semibold text-gray-900 mb-3 text-center">Rewards</h3>
-                      <div className="space-y-2">
-                        {cardTemplate.perks.map((perk, index) => (
-                          <div key={index} className="flex items-center justify-between p-3 bg-gradient-to-r from-gray-50 to-white rounded-lg border border-gray-200">
-                            <div className="flex items-center gap-3">
-                              <div 
-                                className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-md"
-                                style={{ backgroundColor: perk.color }}
-                              >
-                                {perk.stampNumber}
-                              </div>
-                              <div>
-                                <p className="font-bold text-gray-900 text-sm">{perk.reward}</p>
-                                {perk.details && (
-                                  <p className="text-xs text-gray-600">{perk.details}</p>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
                   {/* Footer */}
-                  <div className="border-t pt-5 md:pt-6" style={{ borderColor: cardTemplate.textColor + '40' }}>
+                  <div className="border-t pt-2" style={{ borderColor: cardTemplate.textColor + '40' }}>
                     <p
-                      className="text-center text-xs sm:text-sm md:text-base opacity-90 font-medium"
+                      className="text-center text-[9px] opacity-90 font-medium"
                       style={{ color: cardTemplate.textColor }}
                     >
                       {cardTemplate.footer}
@@ -255,26 +245,46 @@ export default function Show({ cardTemplate }) {
                   </div>
                 </div>
               </div>
-            </CardContent>
-          </Card>
-        </div>
+       
 
-        {/* Additional Info */}
-        <div className="mt-8 max-w-2xl mx-auto">
-          <Card className="bg-gradient-to-r from-blue-50 to-purple-50 border-purple-200">
-            <CardContent className="p-6">
-              <div className="flex items-start gap-4">
-                <Sparkles className="h-6 w-6 text-purple-600 mt-1 flex-shrink-0" />
-                <div>
-                  <h4 className="font-semibold text-gray-900 mb-2">Customer View</h4>
-                  <p className="text-sm text-gray-700">
-                    This is exactly how your customers will see their loyalty card. All stamps start empty, 
-                    and they'll fill up as customers earn rewards. Share your QR code to let customers access their digital loyalty cards!
-                  </p>
-                </div>
+         
+
+
+          {/* Rewards/Perks Section */}
+          <div>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-black text-lg font-semibold">REWARDS & PERKS</h2>
+            </div>
+
+            {cardTemplate.perks && cardTemplate.perks.length > 0 ? (
+              <div className="space-y-3">
+                {cardTemplate.perks.map((perk, index) => (
+                  <div key={index} className="border rounded-2xl p-4 flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <div 
+                        className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold shadow-lg"
+                        style={{ backgroundColor: perk.color }}
+                      >
+                        {perk.stampNumber}
+                      </div>
+                      <div>
+                        <p className="text-black font-bold text-sm">{perk.reward}</p>
+                        <p className="text-gray-400 text-xs">Unlock at {perk.stampNumber} stamp{perk.stampNumber > 1 ? 's' : ''}</p>
+                        {perk.details && (
+                          <p className="text-gray-500 text-xs mt-1">{perk.details}</p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
-            </CardContent>
-          </Card>
+            ) : (
+              <div className="bg-gray-900 rounded-2xl p-6 text-center">
+                <p className="text-gray-400 text-sm">No rewards configured yet</p>
+              </div>
+            )}
+          </div>
+
         </div>
       </div>
     </AppLayout>
