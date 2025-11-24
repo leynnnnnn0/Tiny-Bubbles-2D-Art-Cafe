@@ -24,12 +24,21 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        $user->business()->firstOrCreate(
+        $business = $user->business()->firstOrCreate(
             ['name' => 'Test Business'],
             [
                 'address' => '123 Main St, City, Country',
                 'contact_email' => 'business@gamila.com',
                 'contact_phone' => '123-456-7890',
+            ]);
+
+            $business->qr_code()->firstOrCreate([
+                'heading' => 'Taylora',
+                'subheading' => 'Join our loyalty program!',
+                'background_color' => '#FFFFFF',
+                'text_color' => '#000000',
+                'background_image' => null,
+                'logo' => null,
             ]);
 
     }

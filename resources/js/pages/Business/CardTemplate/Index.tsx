@@ -154,7 +154,7 @@ export default function Index({ cardTemplates = [] }) {
           <Card key={template.id} className="overflow-hidden hover:shadow-lg transition-shadow duration-300">
             {/* Card Preview */}
             <div
-              className="relative h-64 p-6"
+              className="relative h-64 p-6 mt-0"
               style={{
                 backgroundColor: template.backgroundColor,
                 backgroundImage: template.backgroundImage ? `url(/${template.backgroundImage})` : 'none',

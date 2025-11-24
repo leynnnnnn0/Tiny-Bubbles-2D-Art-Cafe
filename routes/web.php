@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Business\CardTempalateController;
 use App\Http\Controllers\Business\DashboardController;
+use App\Http\Controllers\Business\QRStudioController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
@@ -15,6 +16,9 @@ Route::get('/', function () {
 Route::prefix('business')->group(function(){
     Route::get('/dashboard', [DashboardController::class, 'index']);
     Route::resource('/card-templates', CardTempalateController::class);
+    Route::get('/qr-studio', [QRStudioController::class, 'index']);
+    Route::get('/qr-studio/download', [QRStudioController::class, 'download']);
+    Route::post('/qr-studio/update', [QRStudioController::class, 'update']);
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {

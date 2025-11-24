@@ -189,7 +189,7 @@ export default function Edit({ cardTemplate }) {
                   </CardHeader>
                   <CardContent className="space-y-4 md:space-y-6">
                     {/* Logo Upload */}
-                    <div className="space-y-2">
+                    {/* <div className="space-y-2">
                       <Label className="text-sm md:text-base">Card Logo</Label>
                       <div className="flex items-center gap-4">
                         <Button type="button" variant="outline" className="relative text-xs md:text-sm">
@@ -218,7 +218,7 @@ export default function Edit({ cardTemplate }) {
                         )}
                       </div>
                       {errors.logo && <p className="text-xs md:text-sm text-red-500">{errors.logo}</p>}
-                    </div>
+                    </div> */}
 
                     {/* Background Image */}
                     <div className="space-y-2">

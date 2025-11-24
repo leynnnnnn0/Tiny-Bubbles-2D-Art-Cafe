@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Business extends Model
 {
@@ -13,6 +14,7 @@ class Business extends Model
     protected $fillable = [
         'user_id',
         'name',
+        'qr_token',
         'address',
         'contact_email',
         'contact_phone',
@@ -28,4 +30,17 @@ class Business extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function qr_code()
+    {
+        return $this->hasOne(QrCode::class);
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($business) {
+            $business->qr_token = Str::random(32);
+        });
+    }
 }
