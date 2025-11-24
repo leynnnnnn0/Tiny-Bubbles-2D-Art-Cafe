@@ -15,13 +15,22 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::firstOrCreate(
-            ['email' => 'test@example.com'],
+        $user = User::firstOrCreate(
+            ['email' => 'admin@gmail.com'],
             [
                 'name' => 'Test User',
                 'password' => 'password',
-                'email_verified_at' => now(),
+                'email_verified_at' => now(), 
             ]
         );
+
+        $user->business()->firstOrCreate(
+            ['name' => 'Test Business'],
+            [
+                'address' => '123 Main St, City, Country',
+                'contact_email' => 'business@gamila.com',
+                'contact_phone' => '123-456-7890',
+            ]);
+
     }
 }

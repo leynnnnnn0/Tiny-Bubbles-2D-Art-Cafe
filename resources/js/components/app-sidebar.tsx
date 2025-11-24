@@ -13,14 +13,19 @@ import {
 import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid } from 'lucide-react';
+import { BookOpen, Folder, IdCard, LayoutGrid } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
     {
         title: 'Dashboard',
-        href: dashboard(),
+        href: '/business/dashboard',
         icon: LayoutGrid,
+    },
+      {
+        title: 'Card Templates',
+        href: '/business/card-templates',
+        icon: IdCard,
     },
 ];
 
