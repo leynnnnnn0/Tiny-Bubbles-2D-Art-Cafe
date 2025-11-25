@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('business_id')->constrained()->onDelete('cascade');
             $table->string('logo')->nullable();
+            $table->string('name');
             $table->string('heading');
             $table->string('subheading')->nullable();
             $table->integer('stampsNeeded');

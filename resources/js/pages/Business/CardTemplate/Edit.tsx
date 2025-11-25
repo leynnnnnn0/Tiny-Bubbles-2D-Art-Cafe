@@ -15,6 +15,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 export default function Edit({ cardTemplate }) {
   const { data, setData, put, processing, errors } = useForm({
     logo: cardTemplate.logo ? `/${cardTemplate.logo}` : null,
+    name: cardTemplate.name || '',
     heading: cardTemplate.heading || 'LOYALTY CARD',
     subheading: cardTemplate.subheading || 'Collect stamps and earn rewards!',
     stampsNeeded: cardTemplate.stampsNeeded || 10,
@@ -489,6 +490,18 @@ export default function Edit({ cardTemplate }) {
                     <CardDescription className="text-xs md:text-sm">Add text content and details</CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4 md:space-y-6">
+                     <div className="space-y-2">
+                      <Label className="text-sm md:text-base">Card Name</Label>
+                      <Input
+                        type="text"
+                        value={data.name}
+                        onChange={(e) => setData('name', e.target.value)}
+                        placeholder="This going to be the unique name of the card template"
+                        className="text-xs md:text-sm"
+                      />
+                      {errors.name && <p className="text-xs md:text-sm text-red-500">{errors.name}</p>}
+                    </div>
+                    
                     <div className="space-y-2">
                       <Label className="text-sm md:text-base">Card Heading</Label>
                       <Input

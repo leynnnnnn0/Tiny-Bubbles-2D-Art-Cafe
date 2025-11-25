@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('stamp_codes', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('loyalty_card_id')->constrained()->onDelete('cascade');
             $table->foreignId('business_id')->constrained()->onDelete('cascade');
             $table->foreignId('customer_id')->nullable()->constrained()->onDelete('cascade');
             $table->string('code')->unique();

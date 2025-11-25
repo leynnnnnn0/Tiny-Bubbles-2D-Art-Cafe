@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class StampCode extends Model
 {
     protected $fillable = [
+        'loyalty_card_id',
         'business_id',
         'customer_id',
         'code',
@@ -22,5 +23,10 @@ class StampCode extends Model
     public function customer()
     {
         return $this->belongsTo(Customer::class);
+    }
+
+    public function loyalty_card()
+    {
+        return $this->belongsTo(LoyaltyCard::class);
     }
 }

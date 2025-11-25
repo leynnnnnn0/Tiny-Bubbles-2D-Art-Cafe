@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Business;
 
 use App\Http\Controllers\Controller;
+use App\Models\LoyaltyCard;
 use App\Models\StampCode;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -12,29 +13,63 @@ use Inertia\Inertia;
 
 class IssueStampController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $code = $this->generate();
+        $cards = LoyaltyCard::where('business_id', Auth::user()->business->id)
+            ->select('id', 'name')
+            ->get();
+
+        // Generate code if loyalty_card_id is provided
+        if ($request->has('loyalty_card_id')) {
+            $loyaltyCardId = $request->input('loyalty_card_id');
+            
+            // Validate that the card belongs to this business
+            $cardExists = $cards->contains('id', $loyaltyCardId);
+            
+            if ($cardExists) {
+                $code = $this->generate($loyaltyCardId);
+            } else {
+                $code = [
+                    'success' => false,
+                    'code' => '',
+                    'qr_url' => '',
+                    'created_at' => ''
+                ];
+            }
+        } else {
+            $code = [
+                'success' => false,
+                'code' => '',
+                'qr_url' => '',
+                'created_at' => ''
+            ];
+        }
+
         return Inertia::render('Business/IssueStamp/Index', [
-            'code' => $code
+            'code' => $code,
+            'cards' => $cards
         ]);
     }
 
-    public function generate()
+    private function generate($loyaltyCardId)
     {
+        // Expire old unused codes
         StampCode::whereNull('used_at')
             ->where('created_at', '>=', Carbon::now()->subMinutes(15))
             ->update([
                 'is_expired' => true
             ]);
 
+        // Generate unique code
         do {
             $code = strtoupper(Str::random(8));
         } while (StampCode::where('code', $code)->exists());
 
+        // Create stamp code
         $stampCode = StampCode::create([
             'business_id' => Auth::user()->business->id,
             'customer_id' => null,
+            'loyalty_card_id' => $loyaltyCardId,
             'code' => $code,
             'used_at' => null,
             'is_expired' => false

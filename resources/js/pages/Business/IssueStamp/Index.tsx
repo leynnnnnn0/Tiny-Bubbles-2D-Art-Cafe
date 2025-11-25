@@ -2,7 +2,13 @@ import ModuleHeading from "@/components/module-heading";
 import AppLayout from "@/layouts/app-layout";
 import { Head, router } from "@inertiajs/react";
 import { useState } from "react";
-import axios from "axios";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface StampCode {
   code: string;
@@ -10,31 +16,59 @@ interface StampCode {
   created_at: string;
 }
 
-interface Props {
-    code : {
-        success: boolean;
-        code: string;
-        qr_url: string;
-        created_at: string;
-    }
+interface LoyaltyCard {
+  id: number;
+  name: string;
 }
 
-export default function Index({code} : Props) {
+interface Props {
+  code: {
+    success: boolean;
+    code: string;
+    qr_url: string;
+    created_at: string;
+  };
+  cards: LoyaltyCard[];
+}
+
+export default function Index({ code, cards }: Props) {
   const [loading, setLoading] = useState(false);
-  const [stampCode, setStampCode] = useState<StampCode | null>(null);
+  const [selectedCardId, setSelectedCardId] = useState<string>(
+    cards.length > 0 ? cards[0].id.toString() : ""
+  );
   const [error, setError] = useState<string | null>(null);
 
+  const generateCode = () => {
+    if (!selectedCardId) {
+      setError("Please select a loyalty card");
+      return;
+    }
 
-  const generateCode = async () => {
+    setLoading(true);
+    setError(null);
 
+    router.get('/business/issue-stamp', { 
+      loyalty_card_id: selectedCardId 
+    });
+    
+    console.log('Code generation requested for card:', selectedCardId);
+    setLoading(false);
   };
 
   const generateNewCode = () => {
-        setLoading(true);
+    if (!selectedCardId) {
+      setError("Please select a loyalty card");
+      return;
+    }
+
+    setLoading(true);
     setError(null);
 
-    router.get('/business/issue-stamp');
-    console.log('Code generation requested');
+    router.get('/business/issue-stamp', { 
+      loyalty_card_id: selectedCardId 
+    });
+    
+    console.log('New code generation requested for card:', selectedCardId);
     setLoading(false);
   };
 
@@ -43,30 +77,56 @@ export default function Index({code} : Props) {
       <Head title="Issue Stamp" />
       <div className="w-full max-w-2xl mx-auto sm:mt-6 md:mt-8 sm:px-6 lg:px-8">
         {!code.success ? (
-          <div className="bg-white rounded-lg shadow p-6 sm:p-8 text-center">
-            <div className="mb-4 sm:mb-6">
-              <svg
-                className="w-16 h-16 sm:w-20 sm:h-20 mx-auto text-gray-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 4v16m8-8H4"
-                />
-              </svg>
+          <div className="bg-white rounded-lg shadow p-6 sm:p-8">
+            <div className="text-center mb-6">
+              <div className="mb-4 sm:mb-6">
+                <svg
+                  className="w-16 h-16 sm:w-20 sm:h-20 mx-auto text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 4v16m8-8H4"
+                  />
+                </svg>
+              </div>
+
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2">
+                Ready to Issue a Stamp?
+              </h3>
+              <p className="text-sm sm:text-base text-gray-600 mb-6 px-2">
+                Select a loyalty card and generate a unique code for your customer.
+              </p>
             </div>
 
-            <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2">
-              Ready to Issue a Stamp?
-            </h3>
-            <p className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6 px-2">
-              Click the button below to generate a unique code for your
-              customer.
-            </p>
+            {/* Loyalty Card Selection */}
+            <div className="mb-6">
+              <label htmlFor="loyalty-card" className="block text-sm font-medium text-gray-700 mb-2">
+                Select Loyalty Card
+              </label>
+              {cards.length > 0 ? (
+                <Select value={selectedCardId} onValueChange={setSelectedCardId}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select a loyalty card" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {cards.map((card) => (
+                      <SelectItem key={card.id} value={card.id.toString()}>
+                        {card.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              ) : (
+                <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg text-yellow-700 text-sm">
+                  No loyalty cards available. Please create a loyalty card first.
+                </div>
+              )}
+            </div>
 
             {error && (
               <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md text-red-600 text-sm">
@@ -76,8 +136,8 @@ export default function Index({code} : Props) {
 
             <button
               onClick={generateCode}
-              disabled={loading}
-              className="w-full sm:w-auto px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed transition-colors"
+              disabled={loading || cards.length === 0}
+              className="w-full px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed transition-colors"
             >
               {loading ? "Generating..." : "Generate Code"}
             </button>
@@ -154,6 +214,25 @@ export default function Index({code} : Props) {
                   </p>
                 </div>
               </div>
+            </div>
+
+            {/* Loyalty Card Selection for New Code */}
+            <div className="mb-4">
+              <label htmlFor="loyalty-card-new" className="block text-sm font-medium text-gray-700 mb-2">
+                Select Loyalty Card for New Code
+              </label>
+              <Select value={selectedCardId} onValueChange={setSelectedCardId}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select a loyalty card" />
+                </SelectTrigger>
+                <SelectContent>
+                  {cards.map((card) => (
+                    <SelectItem key={card.id} value={card.id.toString()}>
+                      {card.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="flex gap-3">

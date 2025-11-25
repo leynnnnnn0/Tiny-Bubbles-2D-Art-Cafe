@@ -39,6 +39,7 @@ class CardTempalateController extends Controller
     {
         $validated = $request->validate([
             'logo' => 'nullable|string',
+            'name' => 'required|string|max:255|unique:loyalty_cards,name,' . $id . ',id,business_id,' . Auth::user()->business->id,
             'heading' => 'required|string|max:255',
             'subheading' => 'nullable|string|max:255',
             'stampsNeeded' => 'required|integer|min:1',
@@ -123,6 +124,7 @@ class CardTempalateController extends Controller
             // Update loyalty card
             $loyaltyCard->update([
                 'logo' => $logoPath,
+                'name' => $validated['name'],
                 'heading' => $validated['heading'],
                 'subheading' => $validated['subheading'] ?? null,
                 'stampsNeeded' => $validated['stampsNeeded'],
@@ -204,6 +206,7 @@ class CardTempalateController extends Controller
     {
         $validated = $request->validate([
             'logo' => 'nullable|string',
+            'name' => 'required|string|max:255|unique:loyalty_cards,name,NULL,id,business_id,' . Auth::user()->business->id,
             'heading' => 'required|string|max:255',
             'subheading' => 'nullable|string|max:255',
             'stampsNeeded' => 'required|integer|min:1',
@@ -249,6 +252,7 @@ class CardTempalateController extends Controller
 
             $loyaltyCard = $business->loyaltyCards()->create([
                 'logo' => $logoPath,
+                'name' => $validated['name'],
                 'heading' => $validated['heading'],
                 'subheading' => $validated['subheading'] ?? null,
                 'stampsNeeded' => $validated['stampsNeeded'],

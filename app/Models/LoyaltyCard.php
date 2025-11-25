@@ -13,6 +13,7 @@ class LoyaltyCard extends Model
     protected $fillable = [
         'business_id',
         'logo',
+        'name',
         'heading',
         'subheading',
         'stampsNeeded',
@@ -37,5 +38,10 @@ class LoyaltyCard extends Model
     public function perks()
     {
         return $this->hasMany(Perk::class);
+    }
+
+    public function stamp_codes()
+    {
+        return $this->hasMany(StampCode::class);
     }
 }

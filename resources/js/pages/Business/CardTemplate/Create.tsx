@@ -15,6 +15,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 export default function Create() {
   const { data, setData, post, processing, errors } = useForm({
     logo: null,
+    name: '',
     heading: 'LOYALTY CARD',
     subheading: 'Collect stamps and earn rewards!',
     stampsNeeded: 10,
@@ -495,6 +496,18 @@ export default function Create() {
                     <CardDescription className="text-xs md:text-sm">Add text content and details</CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4 md:space-y-6">
+                       <div className="space-y-2">
+                      <Label className="text-sm md:text-base">Card Name</Label>
+                      <Input
+                        type="text"
+                        value={data.name}
+                        onChange={(e) => setData('name', e.target.value)}
+                        placeholder="This going to be the unique name of the card template"
+                        className="text-xs md:text-sm"
+                      />
+                      {errors.name && <p className="text-xs md:text-sm text-red-500">{errors.name}</p>}
+                    </div>
+
                     <div className="space-y-2">
                       <Label className="text-sm md:text-base">Card Heading</Label>
                       <Input
