@@ -45,9 +45,12 @@ class IssueStampController extends Controller
             ];
         }
 
+
+
         return Inertia::render('Business/IssueStamp/Index', [
             'code' => $code,
-            'cards' => $cards
+            'cards' => $cards,
+            'loyalty_card_id' => $request->input('loyalty_card_id', null),
         ]);
     }
 

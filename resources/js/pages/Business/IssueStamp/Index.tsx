@@ -1,7 +1,7 @@
 import ModuleHeading from "@/components/module-heading";
 import AppLayout from "@/layouts/app-layout";
 import { Head, router } from "@inertiajs/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Select,
   SelectContent,
@@ -29,13 +29,22 @@ interface Props {
     created_at: string;
   };
   cards: LoyaltyCard[];
+  loyalty_card_id?: string;
 }
 
-export default function Index({ code, cards }: Props) {
+export default function Index({ code, cards, loyalty_card_id }: Props) {
   const [loading, setLoading] = useState(false);
   const [selectedCardId, setSelectedCardId] = useState<string>(
-    cards.length > 0 ? cards[0].id.toString() : ""
+     loyalty_card_id?.toString || cards.length > 0 ? cards[0].id.toString() : ""
   );
+
+  useEffect(() => {
+    if (loyalty_card_id) {
+      setSelectedCardId(loyalty_card_id.toString());
+    }
+  }, [loyalty_card_id]);
+
+
   const [error, setError] = useState<string | null>(null);
 
   const generateCode = () => {

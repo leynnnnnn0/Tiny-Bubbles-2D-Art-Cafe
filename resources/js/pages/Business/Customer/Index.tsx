@@ -34,7 +34,7 @@ interface Paginated<T> {
 
 interface Customer {
   id: number;
-  users: string;
+  username: string;
   email: string;
   created_at: string;
 }
@@ -86,7 +86,7 @@ export default function Index({ customers, filters }: Props) {
         description="Manage your business customers."
       />
 
-      <div className="mt-6 sm:px-6 lg:px-8">
+      <div className="mt-6">
         <div className="mb-4 relative max-w-md">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
           <Input
@@ -103,7 +103,7 @@ export default function Index({ customers, filters }: Props) {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Name</TableHead>
+                <TableHead>Username</TableHead>
                 <TableHead>Email</TableHead>
                 <TableHead>Created At</TableHead>
               </TableRow>
@@ -113,7 +113,7 @@ export default function Index({ customers, filters }: Props) {
                 customers.data.map((customer) => (
                   <TableRow key={customer.id}>
                     <TableCell className="font-medium">
-                      {customer.users}
+                      {customer.username}
                     </TableCell>
                     <TableCell>{customer.email}</TableCell>
                     <TableCell>{formatDate(customer.created_at)}</TableCell>

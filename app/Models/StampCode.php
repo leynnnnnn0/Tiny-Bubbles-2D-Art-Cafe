@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class StampCode extends Model
 {
+    use SoftDeletes;
     protected $fillable = [
         'loyalty_card_id',
         'business_id',
@@ -28,5 +30,10 @@ class StampCode extends Model
     public function loyalty_card()
     {
         return $this->belongsTo(LoyaltyCard::class);
+    }
+
+    public function completed_loyalty_card()
+    {
+        return $this->hasOne(CompletedLoyaltyCard::class);
     }
 }
