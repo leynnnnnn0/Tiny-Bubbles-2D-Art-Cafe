@@ -8,6 +8,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Store, Mail, Lock, User, AlertCircle, Building2 } from 'lucide-react';
 import { toast } from 'sonner';
+import LOGO from '../../../../images/mainLogo.png';
 
 interface Business {
     id: number;
@@ -56,9 +57,7 @@ export default function Register({ businesses, selectedBusiness }: RegisterProps
                                     className="h-16 w-auto"
                                 />
                             ) : (
-                                <div className="h-16 w-16 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-                                    <Store className="h-8 w-8 text-white" />
-                                </div>
+                               <img src={LOGO} alt="business logo" className='w-32 h-12'/>
                             )}
                         </div>
                         <CardTitle className="text-2xl font-bold text-center">
@@ -175,7 +174,7 @@ export default function Register({ businesses, selectedBusiness }: RegisterProps
                                 Already have an account?{' '}
                                 <Link
                                     href={'/customer/login'}
-                                    className="font-semibold text-primary hover:underline bg-accent hover:bg-accent/70"
+                                    className="font-semibold text-primary hover:underline hover:text-accent/70"
                                 >
                                     Sign in
                                 </Link>

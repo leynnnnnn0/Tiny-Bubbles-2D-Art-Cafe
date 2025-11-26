@@ -136,6 +136,8 @@ export default function Login({ business, status }: LoginProps) {
                                 {processing ? 'Signing in...' : 'Sign In'}
                             </Button>
 
+                            <span className="text-black text-xs">Don't have an acccount? Scan the QR of your favorite store</span>
+
                         </CardFooter>
                     </form>
                 </Card>

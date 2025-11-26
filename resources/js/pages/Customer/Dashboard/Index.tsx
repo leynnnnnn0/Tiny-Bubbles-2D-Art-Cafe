@@ -17,7 +17,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
+import LOGO from "../../../../images/mainLogo.png";
 
 interface Perk {
   id: number;
@@ -441,8 +441,8 @@ export default function Index({ cardTemplates, stampCodes, completedCards, custo
         <header className="bg-white border-b border-gray-200">
           <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
             <div className="flex items-center gap-8">
-              <div className="w-10 h-10 bg-black rounded-xl flex items-center justify-center">
-                <Wallet className="w-5 h-5 text-white" />
+              <div className="rounded-xl flex items-center justify-center">
+                 <img src={LOGO} alt="business logo" className='h-12'/>
               </div>
               <nav className="flex gap-8">
                 <button className="text-black font-semibold border-b-2 border-black pb-1">
@@ -470,7 +470,7 @@ export default function Index({ cardTemplates, stampCodes, completedCards, custo
           </div>
         </header>
         <main className="max-w-7xl mx-auto px-6 py-8">
-          <h1 className="font-bold text-black mb-8 sm:text-4xl text-xl">{customer} 👋</h1>
+          <h1 className="font-bold text-primary mb-8 sm:text-4xl text-xl">{customer} 👋</h1>
           <Card className="border-gray-200">
             <CardContent className="p-8 text-center">
               <p className="text-gray-500">No loyalty cards available yet.</p>
@@ -487,11 +487,11 @@ export default function Index({ cardTemplates, stampCodes, completedCards, custo
       <header className="bg-white border-b border-gray-200 shadow-sm">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-8">
-            <div className="w-10 h-10 bg-gradient-to-br from-black to-gray-800 rounded-xl flex items-center justify-center shadow-lg">
-              <Wallet className="w-5 h-5 text-white" />
-            </div>
+           <div className="rounded-xl flex items-center justify-center">
+                 <img src={LOGO} alt="business logo" className='h-12'/>
+              </div>
             <nav className="hidden sm:flex gap-8">
-              <button className="text-black font-semibold border-b-2 border-black pb-1">
+              <button className="text-primary font-semibold border-b-2 border-primary pb-1">
                 Home
               </button>
             </nav>
@@ -499,7 +499,7 @@ export default function Index({ cardTemplates, stampCodes, completedCards, custo
           <div className="flex items-center gap-4">
             <Button 
               onClick={handleRecordStamp}
-              className="bg-black text-white hover:bg-gray-800"
+              className="bg-primary text-white hover:bg-primary/70"
               size="sm"
             >
               <Plus className="w-4 h-4" />
@@ -526,7 +526,7 @@ export default function Index({ cardTemplates, stampCodes, completedCards, custo
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-6 py-8">
-        <h1 className="sm:text-4xl text-lg font-bold text-gray-900 mb-8">
+        <h1 className="sm:text-4xl text-lg font-bold text-primary mb-8">
           {customer} 👋
         </h1>
 
