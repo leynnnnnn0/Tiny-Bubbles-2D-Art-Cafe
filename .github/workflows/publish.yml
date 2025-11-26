@@ -1,23 +1,23 @@
-name: Generate a build and push to another branch
+name: Deploy to Hostinger
 
 on:
   push:
     branches:
-      - main # The branch name your are commit the new changes
+      - main
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
-    name: Build and Push
+    name: Build and Deploy
     steps:
-      - name: git-checkout
+      - name: Checkout code
         uses: actions/checkout@v3
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.2' # Adjust to your PHP version (8.1, 8.2, 8.3, etc.)
-          extensions: mbstring, xml, ctype, json, bcmath
+          php-version: '8.3' # Adjust to your version
+          extensions: mbstring, xml, ctype, json, bcmath, pdo, mysql
           coverage: none
 
       - name: Install Composer dependencies
@@ -26,21 +26,45 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20' # Adjust to your Node version if needed
+          node-version: '20'
+          cache: 'npm'
 
-      - name: Install all dependencies
-        run: npm install
+      - name: Install NPM dependencies
+        run: npm ci
 
-      - name: Build
-        run: npm run build # The build command of your project
+      - name: Build Vite assets
+        run: npm run build
         env:
           APP_ENV: production
 
-      - name: Push
-        uses: s0/git-publish-subdir-action@develop
-        env:
-          REPO: self
-          BRANCH: build # Changed from 'main' to avoid conflicts
-          FOLDER: dist # Update this to match your build output folder
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          MESSAGE: "Build: ({sha}) {msg}"
+      - name: Create deployment package
+        run: |
+          mkdir deploy
+          rsync -av --exclude='.git' \
+            --exclude='node_modules' \
+            --exclude='.env' \
+            --exclude='tests' \
+            --exclude='.github' \
+            --exclude='storage/logs/*' \
+            --exclude='storage/framework/cache/*' \
+            --exclude='storage/framework/sessions/*' \
+            --exclude='storage/framework/views/*' \
+            . deploy/
+
+      - name: Deploy to Hostinger via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ftp://145.79.25.228
+          username: u574811581.stampbayan
+          password: Plokinopki00!
+          port: 21
+          protocol: ftps
+          local-dir: ./
+          server-dir: /public_html/
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            **/tests/**
+            **/.env.example
+            **/.github/**
