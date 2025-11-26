@@ -57,7 +57,7 @@ jobs:
           server: ftp.stampbayan.com
           username: u574811581.stampbayan
           password: Plokinopki00!
-          protocol: ftps
+          protocol: ftp
           local-dir: ./
           server-dir: /public_html/
           exclude: |
