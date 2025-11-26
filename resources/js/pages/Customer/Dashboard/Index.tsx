@@ -19,6 +19,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import LOGO from "../../../../images/mainLogo.png";
 
+import { useEffect } from 'react';
+import { BrowserQRCodeReader } from '@zxing/browser';
+
 interface Perk {
   id: number;
   stampNumber: number;
@@ -106,7 +109,7 @@ export default function Index({ cardTemplates, stampCodes, completedCards, custo
   const videoRef = useRef<HTMLVideoElement>(null);
   const [scanning, setScanning] = useState(false);
   const { flash } = usePage().props as any;
-
+const controlsRef = useRef<any>(null);
   const { data, setData, errors, post, processing, reset } = useForm({
     code: '',
     loyalty_card_id: cardTemplates[0]?.id || null,
@@ -173,7 +176,78 @@ export default function Index({ cardTemplates, stampCodes, completedCards, custo
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
       }
+
+      const codeReader = new BrowserQRCodeReader();
+
+const videoInputDevices = await BrowserQRCodeReader.listVideoInputDevices();
+
+// choose your media device (webcam, frontal camera, back camera, etc.)
+const selectedDeviceId = videoInputDevices[0].deviceId;
+
+console.log(`Started decode from camera with id ${selectedDeviceId}`);
+
+
+// you can use the controls to stop() the scan or switchTorch() if available
+const controls = await codeReader.decodeFromVideoDevice(selectedDeviceId, undefined, (result, error, controls) => {
+  controlsRef.current = controls;
+  if (result) {
+            const scannedCode = result.text;
+            data.loyalty_card_id = scannedCode;
+            console.log(data);
+            console.log(scannedCode);
+
+            router.post('/stamps/record', {
+              loyalty_card_id: currentCard?.id,
+              code: scannedCode
+            },
+            {
+                onSuccess: (page) => {
+                const index = cardTemplates.findIndex(card => card.id === page.props.flash.active_card_id);
+                if (index !== -1) {
+                  setCurrentCardIndex(index);
+                }
+                
+                if (page.props.flash.card_completed) {
+                  toast.success(`🎉 ${page.props.flash.message}`, {
+                    description: `You completed cycle #${page.props.flash.cycle_number}!`
+                  });
+                } else {
+                  toast.success("Stamped Successfully.");
+                }
+
+                 setScanDialogOpen(false);
+      setScanning(false);
+         controls.stop();
+                
+                reset();
+              },
+              onError: (errors) => {
+                if (errors.code) {
+                  toast.error(errors.code);
+                } else {
+                  toast.error('Failed to record stamp. Please try again.');
+                }
+                        setScanDialogOpen(false);
+      setScanning(false);
+           controls.stop();
+              },
+              onFinish: () => {
+                controls.stop();
+                stopCamera();
+              }
+            }
+          )
+
+         
+           
+  }else {
+    console.log(result)
+  }
+});
+
+
     } catch (err) {
+      console.log(err);
       toast.error('Camera access denied. Please enable camera permissions.');
       setScanDialogOpen(false);
       setScanning(false);
@@ -181,6 +255,15 @@ export default function Index({ cardTemplates, stampCodes, completedCards, custo
   };
 
   const stopCamera = () => {
+      if (controlsRef.current) {
+    try {
+      controlsRef.current.stop();
+    } catch (error) {
+      console.error('Error stopping controls:', error);
+    }
+    controlsRef.current = null;
+  }
+
     if (videoRef.current && videoRef.current.srcObject) {
       const stream = videoRef.current.srcObject as MediaStream;
       stream.getTracks().forEach(track => track.stop());
@@ -189,6 +272,18 @@ export default function Index({ cardTemplates, stampCodes, completedCards, custo
     setScanning(false);
     setScanDialogOpen(false);
   };
+
+    useEffect(() => {
+  return () => {
+    stopCamera();
+  };
+}, []);
+
+useEffect(() => {
+  if(!scanDialogOpen){
+    stopCamera();
+  }
+},[scanDialogOpen])
 
   const handleSubmitCode = (e: React.FormEvent) => {
     e.preventDefault();
@@ -221,7 +316,11 @@ export default function Index({ cardTemplates, stampCodes, completedCards, custo
         }
       }
     });
+
+    
   };
+
+
 
   const StampShape = ({ shape, isFilled, isReward, rewardText, color, stampImage }: {
     shape: string;
@@ -956,42 +1055,52 @@ export default function Index({ cardTemplates, stampCodes, completedCards, custo
         </DialogContent>
       </Dialog>
 
-      {/* QR Scanner Dialog */}
-      <Dialog open={scanDialogOpen} onOpenChange={(open) => {
-        if (!open) stopCamera();
-      }}>
-        <DialogContent className="sm:max-w-lg">
-          <DialogHeader>
-            <DialogTitle>Scan QR Code</DialogTitle>
-            <DialogDescription>
-              Position the QR code within the frame
-            </DialogDescription>
-          </DialogHeader>
-          <div className="py-4">
-            <div className="relative bg-black rounded-lg overflow-hidden aspect-square">
-              <video
-                ref={videoRef}
-                autoPlay
-                playsInline
-                className="w-full h-full object-cover"
-              />
-              {scanning && (
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-64 h-64 border-4 border-white rounded-lg"></div>
+   {/* QR Scanner Dialog */}
+    <Dialog open={scanDialogOpen} onOpenChange={(open) => {
+      if (!open) stopCamera();
+    }}>
+      <DialogContent className="sm:max-w-lg">
+        <DialogHeader>
+          <DialogTitle>Scan QR Code</DialogTitle>
+          <DialogDescription>
+            Position the QR code within the frame
+          </DialogDescription>
+        </DialogHeader>
+        <div className="py-4">
+          <div className="relative bg-black rounded-lg overflow-hidden aspect-square">
+            <video
+              ref={videoRef}
+              autoPlay
+              playsInline
+              muted
+              className="w-full h-full object-cover"
+            />
+            {scanning && (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="w-64 h-64 border-4 border-white rounded-lg shadow-lg">
+                  {/* Scanning corners */}
+                  <div className="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-green-500"></div>
+                  <div className="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-green-500"></div>
+                  <div className="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-green-500"></div>
+                  <div className="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-green-500"></div>
                 </div>
-              )}
-            </div>
-            <p className="text-sm text-gray-500 text-center mt-4">
-              Note: QR scanning functionality requires additional QR code detection library
-            </p>
+                <div className="absolute bottom-4 left-0 right-0 text-center">
+                  <p className="text-white text-sm bg-black bg-opacity-50 px-4 py-2 rounded-lg inline-block">
+                    Scanning for QR code...
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
-          <div className="flex justify-end">
-            <Button variant="outline" onClick={stopCamera}>
-              Cancel
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+        </div>
+        <div className="flex justify-end">
+          <Button variant="outline" onClick={stopCamera}>
+            Cancel
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
+
 
       {/* Completed Card Detail Dialog */}
       <Dialog open={!!selectedCompletedCard} onOpenChange={() => setSelectedCompletedCard(null)}>

@@ -559,7 +559,7 @@ export default function Welcome() {
                                 </div>
                             </div>
 
-                            <button className="w-full py-3.5 rounded-full font-semibold text-base lg:text-lg transition-all duration-300 hover:scale-105 border-2 hover:shadow-lg" style={{ borderColor: '#333333', color: '#333333', backgroundColor: 'transparent' }}>
+                            <button onClick={() => setLoginDialogOpen(true)} className="w-full py-3.5 rounded-full font-semibold text-base lg:text-lg transition-all duration-300 hover:scale-105 border-2 hover:shadow-lg" style={{ borderColor: '#333333', color: '#333333', backgroundColor: 'transparent' }}>
                                 Start Free Trial
                             </button>
                         </div>
@@ -620,7 +620,7 @@ export default function Welcome() {
                                 </div>
                             </div>
 
-                            <button className="w-full py-3.5 rounded-full font-semibold text-base sm:text-lg transition-all duration-300 hover:scale-105 hover:shadow-xl" style={{ backgroundColor: '#F4B942', color: '#333333' }}>
+                            <button onClick={() => setLoginDialogOpen(true)} className="w-full py-3.5 rounded-full font-semibold text-base sm:text-lg transition-all duration-300 hover:scale-105 hover:shadow-xl" style={{ backgroundColor: '#F4B942', color: '#333333' }}>
                                 Get Started
                             </button>
                         </div>
