@@ -54,8 +54,8 @@ jobs:
       - name: Deploy to Hostinger via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
-          server: ftp.stampbayan.com
-          username: u574811581.stampbayan
+          server: ftp://145.79.25.228
+          username: u574811581
           password: Plokinopki00!
           protocol: ftp
           local-dir: ./
