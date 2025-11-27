@@ -238,6 +238,7 @@ const handleScanQR = async () => {
       }
     );
   } catch (err) {
+    window.alert(err);
     console.log(err);
     toast.error('Camera access denied. Please enable camera permissions.');
     setScanDialogOpen(false);
