@@ -1,65 +1,43 @@
 name: Deploy to Hostinger
 
-on:
-  push:
-    branches:
-      - main
+on: [push]
 
 jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
-    name: Build and Deploy
+  build_and_deploy:
+    name: Build package and deploy to Hostinger
+    runs-on: windows-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.3' # Adjust to your version
-          extensions: mbstring, xml, ctype, json, bcmath, pdo, mysql
-          coverage: none
+          php-version: "8.3"
+          extensions: fileinfo, mbstring, xml, gd, zip
+          ini-values: post_max_size=256M, max_execution_time=180
 
-      - name: Install Composer dependencies
-        run: composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '20'
-          cache: 'npm'
-
-      - name: Install NPM dependencies
-        run: npm ci
-
-      - name: Build Vite assets
-        run: npm run build
-        env:
-          APP_ENV: production
-
-      - name: Create deployment package
+      - name: Install Dependencies
+        shell: powershell
         run: |
-          mkdir deploy
-          rsync -av --exclude='.git' \
-            --exclude='node_modules' \
-            --exclude='.env' \
-            --exclude='tests' \
-            --exclude='.github' \
-            --exclude='storage/logs/*' \
-            --exclude='storage/framework/cache/*' \
-            --exclude='storage/framework/sessions/*' \
-            --exclude='storage/framework/views/*' \
-            . deploy/
+          if (Test-Path "package.json") { npm install }
+          if (Test-Path "composer.json") { composer install }
 
-      - name: Deploy to Hostinger via FTP
+      - name: Build Project
+        shell: powershell
+        run: |
+          if (Test-Path "package.json") { npm run build }
+
+      - name: Deploy to FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
-          server: ftp://145.79.25.228
-          username: u574811581
+          server: ftp.stampbayan.com
+          username: u574811581.stampbayan
           password: Plokinopki00!
           protocol: ftp
+          port: 21
           local-dir: ./
           server-dir: /public_html/
+          timeout: 120000
           exclude: |
             **/.git*
             **/.git*/**
