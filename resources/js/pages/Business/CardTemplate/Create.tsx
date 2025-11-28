@@ -22,6 +22,7 @@ export default function Create() {
     stampsNeeded: 10,
     mechanics: 'Get 1 stamp per purchase. Collect stamps to unlock rewards!',
     backgroundColor: '#4DB6AC',
+    valid_until: '',
     textColor: '#FFFFFF',
     stampColor: '#4DB6AC',
     stampFilledColor: '#FF6B6B',
@@ -72,8 +73,9 @@ export default function Create() {
       onSuccess: () => {
         toast.success('Loyalty Card Created Successfully.');
       },
-      onError: () => {
+      onError: (e) => {
         toast.error("Please fill up all the required fields");
+        console.log(e);
       }
     });
   };
@@ -562,6 +564,16 @@ export default function Create() {
                         className="text-xs md:text-sm"
                       />
                       {errors.footer && <p className="text-xs md:text-sm text-red-500">{errors.footer}</p>}
+                    </div>
+
+                     <div className="space-y-2">
+                      <Label className="text-sm md:text-base">Valid Until</Label>
+                      <Input
+                        type="date"
+                        value={data.valid_until}
+                        onChange={(e) => setData('valid_until', e.target.value)}
+                      />
+                      {errors.valid_until && <p className="text-xs md:text-sm text-red-500">{errors.valid_until}</p>}
                     </div>
                   </CardContent>
                 </Card>

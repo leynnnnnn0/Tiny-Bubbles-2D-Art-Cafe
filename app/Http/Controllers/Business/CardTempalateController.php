@@ -20,6 +20,7 @@ class CardTempalateController extends Controller
             }])
             ->latest()
             ->get();
+        
 
 
         return Inertia::render('Business/CardTemplate/Index', [
@@ -46,6 +47,7 @@ class CardTempalateController extends Controller
             'name' => 'required|string|max:255|unique:loyalty_cards,name,' . $id . ',id,business_id,' . Auth::user()->business->id,
             'heading' => 'required|string|max:255',
             'subheading' => 'nullable|string|max:255',
+            'valid_until' => 'required',
             'stampsNeeded' => 'required|integer|min:1',
             'mechanics' => 'required|string|max:500',
             'backgroundColor' => 'nullable|string|max:7',
@@ -64,7 +66,6 @@ class CardTempalateController extends Controller
             'perks.*.color' => 'nullable|string|max:7',
             'perks.*.details' => 'nullable|string|max:1000',
         ]);
-
 
         DB::beginTransaction();
 
@@ -133,6 +134,7 @@ class CardTempalateController extends Controller
                 'subheading' => $validated['subheading'] ?? null,
                 'stampsNeeded' => $validated['stampsNeeded'],
                 'mechanics' => $validated['mechanics'],
+                 'valid_until' => $validated['valid_until'],
                 'backgroundColor' => $validated['backgroundColor'] ?? '#FFFFFF',
                 'textColor' => $validated['textColor'] ?? '#000000',
                 'stampColor' => $validated['stampColor'] ?? '#FF0000',
@@ -213,6 +215,7 @@ class CardTempalateController extends Controller
             'name' => 'required|string|max:255|unique:loyalty_cards,name,NULL,id,business_id,' . Auth::user()->business->id,
             'heading' => 'required|string|max:255',
             'subheading' => 'nullable|string|max:255',
+            'valid_until' => 'required',
             'stampsNeeded' => 'required|integer|min:1',
             'mechanics' => 'required|string|max:500',
             'backgroundColor' => 'nullable|string|max:7',
@@ -260,6 +263,7 @@ class CardTempalateController extends Controller
                 'heading' => $validated['heading'],
                 'subheading' => $validated['subheading'] ?? null,
                 'stampsNeeded' => $validated['stampsNeeded'],
+                'valid_until' => $validated['valid_until'],
                 'mechanics' => $validated['mechanics'],
                 'backgroundColor' => $validated['backgroundColor'] ?? '#FFFFFF',
                 'textColor' => $validated['textColor'] ?? '#000000',

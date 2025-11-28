@@ -16,6 +16,7 @@ class IssueStampController extends Controller
     public function index(Request $request)
     {
         $cards = LoyaltyCard::where('business_id', Auth::user()->business->id)
+        ->whereDate('valid_until', '>', today())
             ->select('id', 'name')
             ->get();
 

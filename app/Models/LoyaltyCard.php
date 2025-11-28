@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -20,6 +21,7 @@ class LoyaltyCard extends Model
         'mechanics',
         'backgroundColor',
         'textColor',
+        'valid_until',
         'stampColor',
         'stampFilledColor',
         'stampEmptyColor',
@@ -29,6 +31,39 @@ class LoyaltyCard extends Model
         'stampShape',
 
     ];
+
+    protected $appends = [
+        'is_near_expiry_date',
+        'is_expired',
+        'valid_until_formatted'
+    ];
+
+
+    public function getValidUntilFormattedAttribute()
+    {
+        return Carbon::parse($this->valid_until)->format('F d, Y');
+    }
+
+    public function getIsNearExpiryDateAttribute()
+    {
+        if (!$this->valid_until) {
+            return false;
+        }
+
+        $expiryDate = Carbon::parse($this->valid_until);
+        $sevenDaysBeforeExpiry = $expiryDate->copy()->subDays(7);
+
+        return now()->greaterThanOrEqualTo($sevenDaysBeforeExpiry) && now()->lessThan($expiryDate);
+    }
+
+    public function getIsExpiredAttribute()
+    {
+        if (!$this->valid_until) {
+            return false;
+        }
+
+        return now()->greaterThanOrEqualTo(Carbon::parse($this->valid_until));
+    }
 
     public function business()
     {

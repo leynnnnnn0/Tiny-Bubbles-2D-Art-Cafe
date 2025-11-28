@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('heading');
             $table->string('subheading')->nullable();
             $table->integer('stampsNeeded');
+            $table->date('valid_until');
             $table->text('mechanics')->nullable();
             $table->string('backgroundColor')->default('#FFFFFF');
             $table->string('textColor')->default('#000000');

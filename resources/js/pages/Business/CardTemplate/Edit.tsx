@@ -11,12 +11,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { toast } from 'sonner';
 
 export default function Edit({ cardTemplate }) {
   const { data, setData, put, processing, errors } = useForm({
     logo: cardTemplate.logo ? `/${cardTemplate.logo}` : null,
     name: cardTemplate.name || '',
     heading: cardTemplate.heading || 'LOYALTY CARD',
+     valid_until: cardTemplate.valid_until,
     subheading: cardTemplate.subheading || 'Collect stamps and earn rewards!',
     stampsNeeded: cardTemplate.stampsNeeded || 10,
     mechanics: cardTemplate.mechanics || 'Get 1 stamp per purchase. Collect stamps to unlock rewards!',
@@ -64,7 +66,14 @@ export default function Edit({ cardTemplate }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    put(`/business/card-templates/${cardTemplate.id}`);
+    put(`/business/card-templates/${cardTemplate.id}`,{
+      onSuccess: () => {
+        toast.success("Updated Successfully.");
+      },
+      onError: (e) => {
+        toast.success("An error occured while trying to create the loyalty card");
+      }
+    });
   };
 
   const StampShape = ({ shape, isFilled, isReward, rewardText, color, details }) => {
@@ -556,6 +565,16 @@ export default function Edit({ cardTemplate }) {
                         className="text-xs md:text-sm"
                       />
                       {errors.footer && <p className="text-xs md:text-sm text-red-500">{errors.footer}</p>}
+                    </div>
+
+                     <div className="space-y-2">
+                      <Label className="text-sm md:text-base">Valid Until</Label>
+                      <Input
+                        type="date"
+                        value={data.valid_until}
+                        onChange={(e) => setData('valid_until', e.target.value)}
+                      />
+                      {errors.valid_until && <p className="text-xs md:text-sm text-red-500">{errors.valid_until}</p>}
                     </div>
                   </CardContent>
                 </Card>

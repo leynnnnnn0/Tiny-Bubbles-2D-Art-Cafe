@@ -13,15 +13,14 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { Info } from "lucide-react"
+
 import AppLayout from "@/layouts/app-layout";
 import { Head, router } from "@inertiajs/react";
 import { Plus, Edit, Trash2, Eye, Sparkles, Award, AlertTriangle } from "lucide-react";
 import { useState } from "react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip"
+
 
 export default function Index({ cardTemplates = [] }) {
   const [hoveredStamp, setHoveredStamp] = useState(null);
@@ -272,9 +271,24 @@ export default function Index({ cardTemplates = [] }) {
                         {template.perks.length} Perks
                       </Badge>
                     )}
+                 {template.is_expired && (
+  <div className="flex items-center gap-2">
+    
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+     <Badge className="bg-red-500">Expired      <Info className="h-4 w-4 cursor-help" /></Badge>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>Expired loyalty card is not visible to customers</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  </div>
+)}
                   </CardTitle>
                   <CardDescription className="mt-1">
-                    {template.stampsNeeded} stamps needed
+                    {template.stampsNeeded} stamps needed | Valid Until: {template.valid_until_formatted}
                   </CardDescription>
                 </div>
               </div>

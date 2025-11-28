@@ -20,6 +20,7 @@ class DashboardController extends Controller
         // Get all loyalty cards for the business(es) the customer has interacted with
         $cardTemplates = LoyaltyCard::with('perks')
             ->where('business_id', $customer->business_id)
+            ->whereDate('valid_until', '>', today())
             ->get();
 
         // Get active (non-archived) stamp codes for the customer
