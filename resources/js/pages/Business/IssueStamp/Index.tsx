@@ -34,6 +34,7 @@ interface Props {
 
 export default function Index({ code, cards, loyalty_card_id }: Props) {
   const [loading, setLoading] = useState(false);
+  const [downloadingOffline, setDownloadingOffline] = useState(false);
   const [selectedCardId, setSelectedCardId] = useState<string>(
      loyalty_card_id?.toString || cards.length > 0 ? cards[0].id.toString() : ""
   );
@@ -77,6 +78,39 @@ export default function Index({ code, cards, loyalty_card_id }: Props) {
     });
 
     setLoading(false);
+  };
+
+  const downloadOfflineStamps = async () => {
+    setDownloadingOffline(true);
+    setError(null);
+
+    try {
+      const response = await fetch('/business/issue-stamps/generate-offline', {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/pdf',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to generate offline stamps');
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `loyalty-stamps-${new Date().toISOString().split('T')[0]}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (err) {
+      setError('Failed to download offline stamps. Please try again.');
+      console.error('Download error:', err);
+    } finally {
+      setDownloadingOffline(false);
+    }
   };
 
   return (
@@ -141,13 +175,58 @@ export default function Index({ code, cards, loyalty_card_id }: Props) {
               </div>
             )}
 
-            <button
-              onClick={generateCode}
-              disabled={loading || cards.length === 0}
-              className="w-full px-6 py-3 bg-accent text-white font-medium rounded-lg hover:bg-accent/70 disabled:bg-accent/60 disabled:cursor-not-allowed transition-colors"
-            >
-              {loading ? "Generating..." : "Generate Code"}
-            </button>
+            <div className="space-y-3">
+              <button
+                onClick={generateCode}
+                disabled={loading || cards.length === 0}
+                className="w-full px-6 py-3 bg-accent text-white font-medium rounded-lg hover:bg-accent/70 disabled:bg-accent/60 disabled:cursor-not-allowed transition-colors"
+              >
+                {loading ? "Generating..." : "Generate Code"}
+              </button>
+
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-gray-300"></div>
+                </div>
+                <div className="relative flex justify-center text-sm">
+                  <span className="px-2 bg-white text-gray-500">Or</span>
+                </div>
+              </div>
+
+              <button
+                onClick={downloadOfflineStamps}
+                disabled={downloadingOffline || cards.length === 0}
+                className="w-full px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+              >
+                {downloadingOffline ? (
+                  <>
+                    <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span>Generating Offline Stamps...</span>
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    <span>Download Offline Stamps (8 tickets)</span>
+                  </>
+                )}
+              </button>
+
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-xs text-blue-700">
+                <div className="flex items-start gap-2">
+                  <svg className="w-4 h-4 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                  </svg>
+                  <p>
+                    Offline stamps are perfect for events or areas without internet. Print 25 tickets at once and distribute to customers.
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         ) : (
           <div className="bg-white rounded-lg shadow p-6 sm:p-8">
@@ -242,12 +321,41 @@ export default function Index({ code, cards, loyalty_card_id }: Props) {
               </Select>
             </div>
 
-            <div className="flex gap-3">
+            {error && (
+              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md text-red-600 text-sm">
+                {error}
+              </div>
+            )}
+
+            <div className="space-y-3">
               <button
                 onClick={generateNewCode}
-                className="flex-1 px-4 sm:px-6 py-2.5 sm:py-3 bg-blue-600 text-white text-sm sm:text-base font-medium rounded-lg hover:bg-blue-700 transition-colors"
+                className="w-full px-4 sm:px-6 py-2.5 sm:py-3 bg-accent text-white text-sm sm:text-base font-medium rounded-lg hover:bg-accent/70 transition-colors"
               >
                 Generate New Code
+              </button>
+
+              <button
+                onClick={downloadOfflineStamps}
+                disabled={downloadingOffline}
+                className="w-full px-4 sm:px-6 py-2.5 sm:py-3 bg-blue-600 text-white text-sm sm:text-base font-medium rounded-lg hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+              >
+                {downloadingOffline ? (
+                  <>
+                    <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span>Generating...</span>
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    <span>Download Offline Stamps</span>
+                  </>
+                )}
               </button>
             </div>
           </div>

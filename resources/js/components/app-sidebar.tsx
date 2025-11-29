@@ -60,11 +60,11 @@ const mainNavItems: NavItem[] = [
 ];
 
 const footerNavItems: NavItem[] = [
-    {
-        title: 'Documentation',
-        href: '/documenation',
-        icon: BookOpen,
-    },
+    // {
+    //     title: 'Documentation',
+    //     href: '/documenation',
+    //     icon: BookOpen,
+    // },
 ];
 
 export function AppSidebar() {

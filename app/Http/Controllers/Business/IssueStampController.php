@@ -16,17 +16,17 @@ class IssueStampController extends Controller
     public function index(Request $request)
     {
         $cards = LoyaltyCard::where('business_id', Auth::user()->business->id)
-        ->whereDate('valid_until', '>', today())
+            ->whereDate('valid_until', '>', today())
             ->select('id', 'name')
             ->get();
 
         // Generate code if loyalty_card_id is provided
         if ($request->has('loyalty_card_id')) {
             $loyaltyCardId = $request->input('loyalty_card_id');
-            
+
             // Validate that the card belongs to this business
             $cardExists = $cards->contains('id', $loyaltyCardId);
-            
+
             if ($cardExists) {
                 $code = $this->generate($loyaltyCardId);
             } else {
@@ -85,5 +85,42 @@ class IssueStampController extends Controller
             'qr_url' => "https://api.qrserver.com/v1/create-qr-code/?size=500x500&data={$stampCode->code}",
             'created_at' => $stampCode->created_at->format('M d, Y h:i A')
         ];
+    }
+
+
+    public function generateOfflineStamps()
+    {
+        $registrationLink = "https://stampbayan.com/customer/register?business=" . Auth::user()->business->qr_token;
+
+        // Generate 25 unique codes
+        $tickets = [];
+        for ($i = 0; $i < 8; $i++) {
+            do {
+                $code = strtoupper(Str::random(8));
+            } while (StampCode::where('code', $code)->exists() || in_array($code, array_column($tickets, 'code')));
+
+            // Generate QR code and convert to base64
+            $qrImageUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' . urlencode($registrationLink);
+            $qrImageData = file_get_contents($qrImageUrl);
+            $qrCodeBase64 = 'data:image/png;base64,' . base64_encode($qrImageData);
+
+            $tickets[] = [
+                'code' => $code,
+                'qr_code_base64' => $qrCodeBase64
+            ];
+        }
+
+        $businessName = Auth::user()->business->name;
+
+        $html = view('pdf.offline-stamps', [
+            'tickets' => $tickets,
+            'registrationLink' => $registrationLink,
+            'businessName' => $businessName
+        ])->render();
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadHTML($html);
+        $pdf->setPaper('a4', 'portrait');
+
+        return $pdf->download('loyalty-stamps-' . date('Y-m-d') . '.pdf');
     }
 }

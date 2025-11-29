@@ -25,6 +25,10 @@ Route::get('/', function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::prefix('business')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+        Route::get('/issue-stamps/generate-offline', [IssueStampController::class, 'generateOfflineStamps'])
+            ->name('business.issue-stamp.generate-offline');
+
         Route::resource('/card-templates', CardTempalateController::class);
         Route::get('/qr-studio', [QRStudioController::class, 'index']);
         Route::get('/qr-studio/download', [QRStudioController::class, 'download']);
@@ -51,7 +55,7 @@ Route::post('/stamps/record', [StampCodeController::class, 'record'])
 
 // Customer Authentication Routes
 Route::prefix('customer')->name('customer.')->group(function () {
-     
+
     Route::post('/profile/update', [CustomerDashboardController::class, 'updateProfile'])->name('customer.profile.update');
     Route::post('/password/update', [CustomerDashboardController::class, 'updatePassword'])->name('customer.password.update');
 
