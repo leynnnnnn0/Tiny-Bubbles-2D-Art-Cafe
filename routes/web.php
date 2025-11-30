@@ -17,6 +17,15 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
 
+Route::get('/sitemap.xml', function() {
+    $pages = [
+        ['loc' => url('/'), 'priority' => '1.0', 'changefreq' => 'weekly'],
+    ];
+
+    return response()->view('sitemap', compact('pages'))
+        ->header('Content-Type', 'text/xml');
+});
+
 Route::get('/', function () {
     return Inertia::render('welcome', [
         'canRegister' => Features::enabled(Features::registration()),
