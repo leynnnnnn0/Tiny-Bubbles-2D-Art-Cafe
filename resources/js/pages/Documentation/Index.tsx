@@ -24,7 +24,7 @@ const Documentation = () => {
     { id: 'customers', label: 'Customers', icon: Users },
     { id: 'qr-studio', label: 'QR Studio', icon: QrCode },
     { id: 'tickets', label: 'Tickets', icon: Ticket },
-    { id: 'settings', label: 'Settings', icon: Settings },
+    // { id: 'settings', label: 'Settings', icon: Settings },
   ];
 
   const content = {
@@ -33,7 +33,7 @@ const Documentation = () => {
       description: 'Welcome to the StampBayan documentation. This comprehensive guide will help you understand and utilize all features of the platform.',
       sections: [
         {
-          title: 'What is the Loyalty Card System?',
+          title: 'What is StampBayan?',
           content: 'A powerful SaaS platform designed to help businesses create, manage, and track customer loyalty programs through digital stamp cards, perks, and rewards.'
         },
         {
@@ -178,16 +178,11 @@ const Documentation = () => {
           title: 'Key Metrics',
           items: [
             'Total active customers',
-            'Stamps issued today/week/month',
-            'Perks claimed',
-            'Customer engagement rate',
-            'Most popular card templates',
-            'Recent activity feed'
+            'Stamps issued',
+            'Total new customers',
+            'Customer traffic by day',
+            'Customer visit frequency',
           ]
-        },
-        {
-          title: 'Quick Actions',
-          content: 'Access frequently used features directly from the dashboard, including issuing stamps, viewing recent claims, and managing urgent tickets.'
         }
       ]
     },
@@ -198,20 +193,9 @@ const Documentation = () => {
         {
           title: 'How to Issue Stamps',
           steps: [
-            'Select the customer from the search bar or scan their QR code',
             'Choose the loyalty card template',
-            'Specify the number of stamps to issue',
-            'Add optional notes or transaction reference',
+            'Using your customer account, ask them to scan the code or input it manually',
             'Confirm the stamp issuance'
-          ]
-        },
-        {
-          title: 'Stamp Methods',
-          items: [
-            'Manual Entry: Search customer by name, email, or phone',
-            'QR Code Scan: Scan customer\'s unique QR code',
-            'Stamp Code: Customer enters a unique code',
-            'Bulk Issue: Award stamps to multiple customers'
           ]
         },
         {
@@ -226,7 +210,7 @@ const Documentation = () => {
       sections: [
         {
           title: 'Viewing Claims',
-          content: 'Access a comprehensive list of all perk redemptions, including pending, approved, and completed claims. Filter by date, customer, or perk type.'
+          content: 'Access a comprehensive list of all perk redemptions, including available, total claims, and redeemed claims. Filter, customer, or reward card.'
         },
         {
           title: 'Claim Process',
@@ -241,10 +225,9 @@ const Documentation = () => {
         {
           title: 'Managing Claims',
           items: [
-            'Approve or reject pending claims',
-            'View claim history',
-            'Generate claim reports',
-            'Set automatic approval rules',
+            'redeem pending claims',
+            'undo redeemed claims',
+            'Add remarks',
             'Handle disputed claims'
           ]
         }
@@ -259,23 +242,9 @@ const Documentation = () => {
           content: 'Unique alphanumeric codes that customers can enter to receive stamps automatically. Ideal for promotional campaigns, social media contests, or remote stamp distribution.'
         },
         {
-          title: 'Creating Codes',
-          steps: [
-            'Click "Generate New Code"',
-            'Set stamp value (1-10 stamps)',
-            'Choose expiration date',
-            'Set usage limit (single-use or multi-use)',
-            'Assign to specific card template (optional)',
-            'Generate and distribute code'
-          ]
-        },
-        {
           title: 'Code Management',
           items: [
             'Track code usage statistics',
-            'Deactivate or expire codes early',
-            'Generate bulk codes for campaigns',
-            'Export code lists',
             'Monitor fraud and abuse'
           ]
         }
@@ -303,11 +272,9 @@ const Documentation = () => {
         {
           title: 'Managing Templates',
           steps: [
-            'Create new templates or duplicate existing ones',
-            'Edit active templates (changes affect new cards only)',
-            'Archive outdated templates',
-            'Preview templates before publishing',
-            'Assign templates to customer segments'
+            'Create new templates',
+            'Edit templates',
+            'Delte outdated templates',
           ]
         }
       ]
@@ -318,53 +285,29 @@ const Documentation = () => {
       sections: [
         {
           title: 'Customer Database',
-          content: 'Access detailed profiles for all customers enrolled in your loyalty program, including contact information, card status, and engagement history.'
+          content: 'Access detailed profiles for all customers enrolled in your loyalty program and engagement history.'
         },
         {
           title: 'Customer Information',
           items: [
-            'Personal details (name, email, phone)',
-            'Active loyalty cards',
+            'Personal details (usernname, email, phone)',
             'Total stamps earned',
             'Perks claimed',
             'Join date and last activity',
-            'Custom tags and segments'
           ]
         },
-        {
-          title: 'Customer Actions',
-          items: [
-            'Add new customers manually',
-            'Import customers from CSV',
-            'Edit customer information',
-            'View transaction history',
-            'Send notifications',
-            'Merge duplicate profiles'
-          ]
-        }
       ]
     },
     'qr-studio': {
       title: 'QR Studio',
-      description: 'Generate and customize QR codes for stamps and customer identification.',
+      description: 'Generate and customize your QR Code for store display',
       sections: [
-        {
-          title: 'QR Code Types',
-          items: [
-            'Customer Identification QR: Unique code for each customer',
-            'Stamp Distribution QR: Links to stamp codes',
-            'Card Template QR: Direct enrollment links',
-            'Location-based QR: Physical store check-ins'
-          ]
-        },
         {
           title: 'Creating QR Codes',
           steps: [
-            'Select QR code type',
-            'Configure parameters (stamps, template, expiration)',
-            'Customize design (colors, logo, frame)',
+            'Customize design (colors, logo, heading and subheading)',
             'Preview QR code',
-            'Download in preferred format (PNG, SVG, PDF)',
+            'Download',
             'Print or share digitally'
           ]
         },
@@ -376,77 +319,73 @@ const Documentation = () => {
     },
     tickets: {
       title: 'Tickets',
-      description: 'Customer support and issue resolution system.',
+      description: 'Support and issue resolution system.',
       sections: [
         {
           title: 'Ticket Management',
-          content: 'Handle customer inquiries, complaints, and technical issues through a centralized support ticket system. Track resolution times and customer satisfaction.'
+          content: 'We support ticket system. Track resolution times and customer satisfaction.'
         },
         {
           title: 'Ticket Workflow',
           steps: [
-            'Customer submits ticket or staff creates one',
+            'You submit a ticket including the information of the issue',
             'Ticket is assigned to support team',
             'Staff investigates and responds',
             'Issue is resolved',
             'Ticket is closed with resolution notes',
-            'Customer feedback is collected'
           ]
         },
         {
           title: 'Ticket Features',
           items: [
             'Priority levels (low, medium, high, urgent)',
-            'Category assignment',
             'Internal notes and communication',
             'Attachment support',
             'Status tracking',
-            'Automated responses',
-            'SLA monitoring'
           ]
         }
       ]
     },
-    settings: {
-      title: 'Settings',
-      description: 'Configure system preferences and business rules.',
-      sections: [
-        {
-          title: 'General Settings',
-          items: [
-            'Business name and contact information',
-            'Timezone and locale',
-            'Currency settings',
-            'Notification preferences',
-            'Email templates'
-          ]
-        },
-        {
-          title: 'Loyalty Program Settings',
-          items: [
-            'Default stamp expiration rules',
-            'Claim approval requirements',
-            'Fraud detection thresholds',
-            'Customer enrollment options',
-            'Reward redemption rules'
-          ]
-        },
-        {
-          title: 'User Management',
-          items: [
-            'Add/remove staff users',
-            'Assign roles and permissions',
-            'Configure access levels',
-            'View audit logs',
-            'Manage API keys'
-          ]
-        },
-        {
-          title: 'Integrations',
-          content: 'Connect third-party services like email marketing platforms, POS systems, and analytics tools to enhance your loyalty program functionality.'
-        }
-      ]
-    }
+    // settings: {
+    //   title: 'Settings',
+    //   description: 'Configure system preferences and business rules.',
+    //   sections: [
+    //     {
+    //       title: 'General Settings',
+    //       items: [
+    //         'Business name and contact information',
+    //         'Timezone and locale',
+    //         'Currency settings',
+    //         'Notification preferences',
+    //         'Email templates'
+    //       ]
+    //     },
+    //     {
+    //       title: 'Loyalty Program Settings',
+    //       items: [
+    //         'Default stamp expiration rules',
+    //         'Claim approval requirements',
+    //         'Fraud detection thresholds',
+    //         'Customer enrollment options',
+    //         'Reward redemption rules'
+    //       ]
+    //     },
+    //     {
+    //       title: 'User Management',
+    //       items: [
+    //         'Add/remove staff users',
+    //         'Assign roles and permissions',
+    //         'Configure access levels',
+    //         'View audit logs',
+    //         'Manage API keys'
+    //       ]
+    //     },
+    //     {
+    //       title: 'Integrations',
+    //       content: 'Connect third-party services like email marketing platforms, POS systems, and analytics tools to enhance your loyalty program functionality.'
+    //     }
+    //   ]
+    // }
   };
 
   const searchResults = useMemo(() => {
