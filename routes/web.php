@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\Business\BranchController;
+use App\Http\Controllers\Business\StaffController;
 use App\Http\Controllers\Business\CardTempalateController;
 use App\Http\Controllers\Business\CustomerController;
 use App\Http\Controllers\Business\DashboardController;
@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
 
-Route::get('/sitemap.xml', function() {
+Route::get('/sitemap.xml', function () {
     $pages = [
         ['loc' => url('/'), 'priority' => '1.0', 'changefreq' => 'weekly'],
     ];
@@ -39,8 +39,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::prefix('business')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-        Route::resource('/branches', BranchController::class);
-        
+        Route::resource('/staffs', StaffController::class);
+
         Route::get('/issue-stamps/generate-offline', [IssueStampController::class, 'generateOfflineStamps'])
             ->name('business.issue-stamp.generate-offline');
 

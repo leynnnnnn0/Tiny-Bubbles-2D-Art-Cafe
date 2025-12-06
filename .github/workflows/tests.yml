@@ -2,11 +2,11 @@ name: tests
 
 on:
   push:
-    branches:
+    staffs:
       - develop
       - main
   pull_request:
-    branches:
+    staffs:
       - develop
       - main
 

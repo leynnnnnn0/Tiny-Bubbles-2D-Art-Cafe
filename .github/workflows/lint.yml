@@ -2,11 +2,11 @@ name: linter
 
 on:
   push:
-    branches:
+    staffs:
       - develop
       - main
   pull_request:
-    branches:
+    staffs:
       - develop
       - main
 

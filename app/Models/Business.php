@@ -25,6 +25,11 @@ class Business extends Model
         return $this->hasMany(Customer::class);
     }
 
+    public function staffs()
+    {
+        return $this->hasMany(Staff::class);
+    }
+
     public function loyaltyCards()
     {
         return $this->hasMany(LoyaltyCard::class);

@@ -22,11 +22,11 @@ const mainNavItems: NavItem[] = [
         href: '/business/dashboard',
         icon: LayoutGrid,
     },
-    //  {
-    //     title: 'Branches',
-    //     href: '/business/branches',
-    //     icon: StoreIcon,
-    // },
+     {
+        title: 'Staffs',
+        href: '/business/staffs',
+        icon: StoreIcon,
+    },
       {
         title: 'Issue Stamp',
         href: '/business/issue-stamp',

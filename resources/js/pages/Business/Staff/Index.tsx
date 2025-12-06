@@ -26,32 +26,31 @@ import {
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
-interface Branch {
+interface Staff {
     id: number;
-    store_name: string;
+    branch: string;
     username: string;
-    address?: string;
     remarks?: string;
     is_active: boolean;
 }
 
 interface Props {
-    branches: Branch[];
+    staffs: Staff[];
     filters: {
         search?: string;
     };
 }
 
-export default function Index({ branches, filters }: Props) {
+export default function Index({ staffs, filters }: Props) {
     const [dialogOpen, setDialogOpen] = useState(false);
-    const [editingBranch, setEditingBranch] = useState<Branch | null>(null);
-    const [deleteConfirm, setDeleteConfirm] = useState<Branch | null>(null);
+    const [editingBranch, setEditingBranch] = useState<Staff | null>(null);
+    const [deleteConfirm, setDeleteConfirm] = useState<Staff | null>(null);
     const [search, setSearch] = useState("");
     
     useEffect(() => {
         const timeoutId = setTimeout(() => {
             router.get(
-                "/business/branches",
+                "/business/staffs",
                 { search },
                 {
                     preserveState: true,
@@ -65,11 +64,10 @@ export default function Index({ branches, filters }: Props) {
     }, [search]);
 
     const form = useForm({
-        store_name: "",
+        branch: "",
         username: "",
         password: "",
         confirm_password: "",
-        address: "",
         remarks: "",
         is_active: true,
     });
@@ -81,14 +79,13 @@ export default function Index({ branches, filters }: Props) {
         setDialogOpen(true);
     };
 
-    const openEditDialog = (branch: Branch) => {
+    const openEditDialog = (branch: Staff) => {
         setEditingBranch(branch);
         form.setData({
-            store_name: branch.store_name,
+            branch: branch.branch,
             username: branch.username,
             password: "",
             confirm_password: "",
-            address: branch.address || "",
             remarks: branch.remarks || "",
             is_active: branch.is_active,
         });
@@ -98,9 +95,9 @@ export default function Index({ branches, filters }: Props) {
 
     const handleSubmit = () => {
         if (editingBranch) {
-            form.put(`/branches/${editingBranch.id}`, {
+            form.put(`/business/staffs/${editingBranch.id}`, {
                 onSuccess: () => {
-                    toast.success("Branch updated successfully");
+                    toast.success("Staff updated successfully");
                     setDialogOpen(false);
                     form.reset();
                 },
@@ -109,9 +106,9 @@ export default function Index({ branches, filters }: Props) {
                 },
             });
         } else {
-            form.post("/branches", {
+            form.post("/business/staffs", {
                 onSuccess: () => {
-                    toast.success("Branch created successfully");
+                    toast.success("Staff created successfully");
                     setDialogOpen(false);
                     form.reset();
                 },
@@ -125,9 +122,9 @@ export default function Index({ branches, filters }: Props) {
     const handleDelete = () => {
         if (!deleteConfirm) return;
 
-        form.delete(`/branches/${deleteConfirm.id}`, {
+        form.delete(`/business/staffs/${deleteConfirm.id}`, {
             onSuccess: () => {
-                toast.success("Branch deleted successfully");
+                toast.success("Staff deleted successfully");
                 setDeleteConfirm(null);
             },
             onError: () => {
@@ -138,10 +135,10 @@ export default function Index({ branches, filters }: Props) {
 
     return (
         <AppLayout>
-            <Head title="Branches" />
+            <Head title="Staffs" />
             <ModuleHeading
-                title="Branches"
-                description="Manage the branches of your business"
+                title="Staffs"
+                description="Manage the staffs of your business"
             >
                 <Button onClick={openCreateDialog}>
                     <Plus />
@@ -155,13 +152,10 @@ export default function Index({ branches, filters }: Props) {
                         <thead className="bg-gray-50 border-b border-gray-200">
                             <tr>
                                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Store Name
+                                    Branch
                                 </th>
                                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Username
-                                </th>
-                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">
-                                    Address
                                 </th>
                                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">
                                     Remarks
@@ -175,16 +169,13 @@ export default function Index({ branches, filters }: Props) {
                             </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
-                            {branches?.map((branch) => (
+                            {staffs?.map((branch) => (
                                 <tr key={branch.id} className="hover:bg-gray-50">
                                     <td className="px-4 py-3 text-sm font-medium text-gray-900">
-                                        {branch.store_name}
+                                        {branch.branch}
                                     </td>
                                     <td className="px-4 py-3 text-sm text-gray-500">
                                         {branch.username}
-                                    </td>
-                                    <td className="px-4 py-3 text-sm text-gray-500 hidden sm:table-cell">
-                                        {branch.address || "-"}
                                     </td>
                                     <td className="px-4 py-3 text-sm text-gray-500 hidden md:table-cell">
                                         {branch.remarks || "-"}
@@ -230,25 +221,25 @@ export default function Index({ branches, filters }: Props) {
                 <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                     <DialogHeader>
                         <DialogTitle>
-                            {editingBranch ? "Edit Branch" : "Create New Branch"}
+                            {editingBranch ? "Edit Staff" : "Create New Staff"}
                         </DialogTitle>
                     </DialogHeader>
 
                     <div className="space-y-4">
                         <div>
-                            <Label htmlFor="store_name">Store Name</Label>
+                            <Label htmlFor="branch">Branch</Label>
                             <Input
-                                id="store_name"
+                                id="branch"
                                 type="text"
-                                value={form.data.store_name}
+                                value={form.data.branch}
                                 onChange={(e) =>
-                                    form.setData("store_name", e.target.value)
+                                    form.setData("branch", e.target.value)
                                 }
-                                placeholder="Enter store name"
+                                placeholder="Enter branch name"
                             />
-                            {form.errors.store_name && (
-                                <p className="text-sm text-red-500 mt-1">
-                                    {form.errors.store_name}
+                            {form.errors.branch && (
+                                <p className="text-xs text-red-500 mt-1">
+                                    {form.errors.branch}
                                 </p>
                             )}
                         </div>
@@ -263,7 +254,7 @@ export default function Index({ branches, filters }: Props) {
                                 placeholder="Enter username"
                             />
                             {form.errors.username && (
-                                <p className="text-sm text-red-500 mt-1">
+                                <p className="text-xs text-red-500 mt-1">
                                     {form.errors.username}
                                 </p>
                             )}
@@ -286,7 +277,7 @@ export default function Index({ branches, filters }: Props) {
                                     }
                                 />
                                 {form.errors.password && (
-                                    <p className="text-sm text-red-500 mt-1">
+                                    <p className="text-xs text-red-500 mt-1">
                                         {form.errors.password}
                                     </p>
                                 )}
@@ -310,7 +301,7 @@ export default function Index({ branches, filters }: Props) {
                                         placeholder="Confirm password"
                                     />
                                     {form.errors.confirm_password && (
-                                        <p className="text-sm text-red-500 mt-1">
+                                        <p className="text-xs text-red-500 mt-1">
                                             {form.errors.confirm_password}
                                         </p>
                                     )}
@@ -318,21 +309,6 @@ export default function Index({ branches, filters }: Props) {
                             )}
                         </div>
 
-                        <div>
-                            <Label htmlFor="address">Address (Optional)</Label>
-                            <Input
-                                id="address"
-                                type="text"
-                                value={form.data.address}
-                                onChange={(e) => form.setData("address", e.target.value)}
-                                placeholder="Enter address"
-                            />
-                            {form.errors.address && (
-                                <p className="text-sm text-red-500 mt-1">
-                                    {form.errors.address}
-                                </p>
-                            )}
-                        </div>
 
                         <div>
                             <Label htmlFor="remarks">Remarks</Label>
@@ -344,7 +320,7 @@ export default function Index({ branches, filters }: Props) {
                                 rows={3}
                             />
                             {form.errors.remarks && (
-                                <p className="text-sm text-red-500 mt-1">
+                                <p className="text-xs text-red-500 mt-1">
                                     {form.errors.remarks}
                                 </p>
                             )}
@@ -374,8 +350,8 @@ export default function Index({ branches, filters }: Props) {
                                 {form.processing
                                     ? "Saving..."
                                     : editingBranch
-                                    ? "Update Branch"
-                                    : "Create Branch"}
+                                    ? "Update Staff"
+                                    : "Create Staff"}
                             </Button>
                         </div>
                     </div>
@@ -389,10 +365,10 @@ export default function Index({ branches, filters }: Props) {
             >
                 <AlertDialogContent>
                     <AlertDialogHeader>
-                        <AlertDialogTitle>Delete Branch</AlertDialogTitle>
+                        <AlertDialogTitle>Delete Staff</AlertDialogTitle>
                         <AlertDialogDescription>
                             Are you sure you want to delete{" "}
-                            <strong>{deleteConfirm?.store_name}</strong>? This action
+                            <strong>{deleteConfirm?.branch}</strong>? This action
                             cannot be undone.
                         </AlertDialogDescription>
                     </AlertDialogHeader>
