@@ -930,7 +930,7 @@ useEffect(() => {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-6 py-8">
-        <h1 className="sm:text-4xl text-lg font-bold text-primary mb-8">
+        <h1 className="sm:text-4xl text-xl font-bold text-primary mb-8">
           {customerName} 👋
         </h1>
 
