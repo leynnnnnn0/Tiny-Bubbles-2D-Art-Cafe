@@ -19,6 +19,10 @@ import {
 import APP from '../../images/app.png';
 import LOGO from '../../images/mainLogo.png';
 import { router } from '@inertiajs/react';
+import BUSINESSPOV from "../../videos/business pov.mov";
+import CUSTOMERPOV from "../../videos/customer pov.mov";
+import CUSTOMERTHUMBNAIL from "../../images/customer thumbnail.jpeg";
+import BUSINESSTHUMBANAIL from "../../images/business thumbnail.jpeg";
 
 export default function Welcome() {
     const [isScrolled, setIsScrolled] = useState(false);
@@ -385,6 +389,109 @@ export default function Welcome() {
         </div>
     </div>
 </section>
+
+
+
+        {/* Video Demo Section */}
+        <section className="relative z-10 px-4 sm:px-6 py-16 sm:py-20 lg:py-24 bg-gradient-to-b from-[#f8f9fa] to-white">
+            <div className="max-w-7xl mx-auto">
+                <div className="text-center mb-12">
+                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-black mb-4">
+                        See It In Action
+                    </h2>
+                    <p className="text-black/90 text-base sm:text-lg max-w-2xl mx-auto">
+                        Watch how easy it is for both businesses and customers
+                    </p>
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-6 lg:gap-8 max-w-5xl mx-auto">
+                    {/* Business POV Video */}
+                    <div className="group">
+                        <div className="bg-white rounded-2xl p-4 shadow-xl hover:shadow-2xl transition-all duration-300">
+                            <div className="relative bg-white rounded-xl mb-4 overflow-hidden mx-auto" style={{ maxWidth: '400px' }}>
+                                {/* Phone aspect ratio container - 9:16 for vertical videos */}
+                                <div className="relative w-full" style={{ paddingBottom: '177.78%' }}>
+                                    <div className="absolute inset-0 flex items-center justify-center">
+                                        <div className="text-center">
+                                            <Play className="w-16 h-16 text-white/80 mx-auto mb-3" />
+                                            <p className="text-white/60 text-sm">Business Demo Video</p>
+                                        </div>
+                                    </div>
+                               
+                                    <video 
+                                        className="absolute inset-0 w-full h-full object-contain"
+                                        controls
+                                        poster={BUSINESSTHUMBANAIL}
+                                    >
+                                        <source src={BUSINESSPOV} type="video/mp4" />
+                                    </video>
+                                   
+                                </div>
+                            </div>
+                            <h3 className="text-xl font-bold text-gray-900 mb-2 text-center">Business View</h3>
+                            <p className="text-gray-600 text-sm text-center">
+                                See how simple it is to manage your loyalty program and track customer activity
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* Customer POV Video */}
+                    <div className="group">
+                        <div className="bg-white rounded-2xl p-4 shadow-xl hover:shadow-2xl transition-all duration-300">
+                            <div className="relative bg-white rounded-xl mb-4 overflow-hidden mx-auto" style={{ maxWidth: '400px' }}>
+                                {/* Phone aspect ratio container - 9:16 for vertical videos */}
+                                <div className="relative w-full" style={{ paddingBottom: '177.78%' }}>
+                                    <div className="absolute inset-0 flex items-center justify-center">
+                                        <div className="text-center">
+                                            <Play className="w-16 h-16 text-white/80 mx-auto mb-3" />
+                                            <p className="text-white/60 text-sm">Customer Demo Video</p>
+                                        </div>
+                                    </div>
+                                
+                                    <video 
+                                        className="absolute inset-0 w-full h-full object-contain"
+                                        controls
+                                        poster={CUSTOMERTHUMBNAIL}
+                                    >
+                                        <source src={CUSTOMERPOV} type="video/mp4" />
+                                    </video>
+                                   
+                                </div>
+                            </div>
+                            <h3 className="text-xl font-bold text-gray-900 mb-2 text-center">Customer Experience</h3>
+                            <p className="text-gray-600 text-sm text-center">
+                                Watch how customers scan, collect stamps, and redeem rewards in seconds
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Key Benefits Bar */}
+                <div className="mt-12 bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-12">
+                        <div className="flex items-center gap-3">
+                            <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center">
+                                <CheckCircle2 className="w-6 h-6 text-white" />
+                            </div>
+                            <div className="text-white">
+                                <p className="font-bold text-lg">Very Easy to Use</p>
+                                <p className="text-white/80 text-sm">Set up in minutes, not hours</p>
+                            </div>
+                        </div>
+                        <div className="flex items-center gap-3">
+                            <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center">
+                                <CheckCircle2 className="w-6 h-6 text-white" />
+                            </div>
+                            <div className="text-white">
+                                <p className="font-bold text-lg">No App Download</p>
+                                <p className="text-white/80 text-sm">Works in any browser instantly</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         
                 {/* Features Section */}
                 <section id="features" className="relative z-10 px-4 sm:px-6 py-16 sm:py-20 lg:py-28" style={{ backgroundColor: '#f8f9fa' }}>
