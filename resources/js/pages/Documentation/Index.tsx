@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { BookOpen, LayoutDashboard, Stamp, Gift, Hash, CreditCard, Users, QrCode, Ticket, Settings, Search, X } from 'lucide-react';
+import { BookOpen, LayoutDashboard, Stamp, Gift, Hash, CreditCard, Users, QrCode, Ticket, Settings, Search, X, Store } from 'lucide-react';
 import Dashboard from "../../../images/documentation/dashboard.png";
 import Register from "../../../images/documentation/register.png";
 import Validate from "../../../images/documentation/validate.png";
@@ -17,6 +17,7 @@ const Documentation = () => {
     { id: 'overview', label: 'Overview', icon: BookOpen },
     { id: 'getting-started', label: 'Getting Started', icon: BookOpen },
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+        { id: 'staff-accounts', label: 'Staff Accounts', icon: Store },
     { id: 'issue-stamp', label: 'Issue Stamp', icon: Stamp },
     { id: 'perk-claims', label: 'Perk Claims', icon: Gift },
     { id: 'stamp-codes', label: 'Stamp Codes', icon: Hash },
@@ -233,6 +234,24 @@ const Documentation = () => {
         }
       ]
     },
+    'staff-accounts': {
+  title: 'Staff Accounts',
+  description: 'Create and manage staff accounts.',
+  sections: [
+    {
+      title: 'What are Staff Accounts?',
+      content:
+        'Staff accounts allow staff members to log in separately. Staff members have more limited permissions than the owner.'
+    },
+    {
+      title: 'How can my staff log in?',
+      items: [
+        'https://stampbayan.com/staff/login'
+      ]
+    }
+  ]
+},
+
     'stamp-codes': {
       title: 'Stamp Codes',
       description: 'Create and manage unique codes for stamp distribution.',
