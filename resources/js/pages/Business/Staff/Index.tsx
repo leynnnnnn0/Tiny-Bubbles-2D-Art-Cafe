@@ -212,7 +212,7 @@ export default function Index({ staffs, filters }: Props) {
                                 </tr>
                             ))}
                         </tbody>
-                    </table>
+                    </table> 
                 </div>
             </div>
 

@@ -10,10 +10,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Auth\Notifications\VerifyEmail;
+use Illuminate\Contracts\Auth\CanResetPassword;
+use Illuminate\Auth\Passwords\CanResetPassword as CanResetPasswordTrait;
 
-class Customer extends Model implements AuthenticatableContract, AuthorizableContract
+class Customer extends Model implements AuthenticatableContract, AuthorizableContract, CanResetPassword
 {
-    use Authenticatable, Authorizable, Notifiable;
+    use Authenticatable, Authorizable, Notifiable, CanResetPasswordTrait;
 
     protected $fillable = [
         'business_id',
@@ -75,5 +77,10 @@ class Customer extends Model implements AuthenticatableContract, AuthorizableCon
     public function business()
     {
         return $this->belongsTo(Business::class);
+    }
+
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new \App\Notifications\CustomerResetPasswordNotification($token));
     }
 }

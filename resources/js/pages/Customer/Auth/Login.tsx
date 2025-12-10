@@ -111,6 +111,7 @@ export default function Login({ business, status, isDemo }: LoginProps) {
                                     required
                                     className="h-11"
                                 />
+                      
                             </div>
 
                             <div className="flex items-center space-x-2">
@@ -140,6 +141,12 @@ export default function Login({ business, status, isDemo }: LoginProps) {
                             </Button>
 
                             <span className="text-black text-xs">Don't have an acccount? Scan the QR of your favorite store</span>
+                                      <Link 
+    href="/customer/forgot-password"
+    className="text-sm text-primary hover:underline"
+>
+    Forgot your password?
+</Link>
 
                         </CardFooter>
                     </form>

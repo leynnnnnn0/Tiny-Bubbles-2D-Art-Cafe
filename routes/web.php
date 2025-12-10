@@ -89,6 +89,18 @@ Route::prefix('customer')->name('customer.')->group(function () {
             ->name('register');
 
         Route::post('/register', [CustomerAuthController::class, 'register']);
+
+        Route::get('/forgot-password', [CustomerAuthController::class, 'showForgotPassword'])
+            ->name('password.request');
+
+        Route::post('/forgot-password', [CustomerAuthController::class, 'sendResetLink'])
+            ->name('password.email');
+
+        Route::get('/reset-password/{token}', [CustomerAuthController::class, 'showResetPassword'])
+            ->name('password.reset');
+
+        Route::post('/reset-password', [CustomerAuthController::class, 'resetPassword'])
+            ->name('password.update');
     });
 
     // Email Verification Notice
@@ -129,7 +141,7 @@ Route::name('staff.')->prefix('staff')->group(function () {
         Route::post('/perk-claims/{perkClaim}/redeem', [StaffDashboardController::class, 'markAsRedeemed'])->name('perk-claims.redeem');
         Route::post('/perk-claims/{perkClaim}/undo', [StaffDashboardController::class, 'undoRedeem'])->name('perk-claims.undo');
 
-           Route::post('/logout', [StaffAuthController::class, 'logout'])
+        Route::post('/logout', [StaffAuthController::class, 'logout'])
             ->name('logout');
     });
 
