@@ -58,16 +58,22 @@ class StampCodeController extends Controller
                         $fail('This stamp code has expired.');
                     } elseif ($stampCode->used_at !== null) {
                         $fail('This stamp code has already been used.');
+                    }elseif($stampCode->business_id != Auth::guard('customer')->user()->business_id){
+                        $fail('This stamp code does not belong to this business');
                     }
                 },
             ],
             'loyalty_card_id' => 'required|exists:loyalty_cards,id'
         ]);
 
+
+
         $stampCode = StampCode::where('code', $validated['code'])
             ->whereNull('used_at')
             ->where('is_expired', false)
             ->first();
+
+          
 
         if (!$stampCode) {
             return response()->json(['success' => false, 'message' => 'Invalid or expired stamp code.'], 400);

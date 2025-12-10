@@ -411,11 +411,13 @@ useEffect(() => {
     isReward: boolean;
     rewardText?: string;
     color: string;
+    stampImage: any
   }) => {
     const fillColor = isFilled ? (currentCard.stampFilledColor || color) : currentCard.stampEmptyColor;
     const strokeColor = isFilled ? '#FFFFFF' : '#D1D5DB';
     let stampImageUrl = currentCard.stampImage ? `/${currentCard.stampImage}` : null;
 
+    console.log(stampImage);
     if(stampImage){
       stampImageUrl = `/${stampImage}`;
     }
@@ -512,6 +514,7 @@ useEffect(() => {
 
     const logoUrl = cardTemplate.logo ? `/${cardTemplate.logo}` : null;
     const backgroundImageUrl = cardTemplate.backgroundImage ? `/${cardTemplate.backgroundImage}` : null;
+    console.log(cardTemplate);
     
     return (
       <div 
@@ -519,7 +522,7 @@ useEffect(() => {
         onClick={() => setSelectedCompletedCard(completed)}
       >
         <div
-          className="p-6"
+          className="p-6 min-h-full flex items-center justify-center"
           style={{
             backgroundColor: cardTemplate.backgroundColor,
             backgroundImage: backgroundImageUrl ? `url(${backgroundImageUrl})` : 'none',
@@ -527,7 +530,7 @@ useEffect(() => {
             backgroundPosition: 'center'
           }}
         >
-          <div className="backdrop-blur-sm" style={{ backgroundColor: backgroundImageUrl ? 'rgba(0,0,0,0.2)' : 'transparent' }}>
+          <div className="backdrop-blur-sm p-3 rounded-lg" style={{ backgroundColor: backgroundImageUrl ? 'rgba(0,0,0,0.2)' : 'transparent' }}>
             {/* Logo */}
             {logoUrl && (
               <div className="flex justify-center mb-3">
@@ -1345,7 +1348,7 @@ useEffect(() => {
                   required
                 />
                 {errors.code && (
-                  <div className="text-sm text-destructive">{errors.code}</div>
+                  <div className="text-xs text-destructive">{errors.code}</div>
                 )}
               </div>
             </div>
