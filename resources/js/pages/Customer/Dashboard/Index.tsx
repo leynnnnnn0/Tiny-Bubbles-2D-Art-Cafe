@@ -273,6 +273,7 @@ const handleScanQR = async () => {
               if (index !== -1) {
                 setCurrentCardIndex(index);
               }
+        
               if (page.props.flash.card_completed) {
                 toast.success(`🎉 ${page.props.flash.message}`, {
                   description: `You completed cycle #${page.props.flash.cycle_number}!`
@@ -368,6 +369,7 @@ useEffect(() => {
 
   const handleSubmitCode = (e: React.FormEvent) => {
     e.preventDefault();
+    console.log(data);
     
     post('/stamps/record', {
       onSuccess: (page) => {
@@ -375,6 +377,7 @@ useEffect(() => {
         if (index !== -1) {
           setCurrentCardIndex(index);
         }
+
         
         // Show success message based on completion status
         if (page.props.flash.card_completed) {
@@ -389,6 +392,7 @@ useEffect(() => {
         setRecordDialogOpen(false);
       },
       onError: (errors) => {
+        console.log(errors);
         if (errors.code) {
           toast.error(errors.code);
         } else {

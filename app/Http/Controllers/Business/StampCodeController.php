@@ -77,7 +77,7 @@ class StampCodeController extends Controller
         $loyaltyCardId = $validated['loyalty_card_id'];
 
         try {
-            return DB::transaction(function () use ($stampCode, $customerId, $loyaltyCardId) {
+            return DB::transaction(function () use ($stampCode, $customerId) {
                 // Update the stamp code
                 $stampCode->update([
                     'customer_id' => $customerId,
@@ -86,12 +86,12 @@ class StampCodeController extends Controller
 
                 // Count total stamps for this customer on this loyalty card
                 $totalStamps = StampCode::where('customer_id', $customerId)
-                    ->where('loyalty_card_id', $loyaltyCardId)
+                    ->where('loyalty_card_id', $stampCode->loyalty_card_id)
                     ->whereNotNull('used_at')
                     ->count();
 
                 // Get the loyalty card
-                $loyaltyCard = LoyaltyCard::with('perks')->find($loyaltyCardId);
+                $loyaltyCard = LoyaltyCard::with('perks')->find($stampCode->loyalty_card_id);
 
                 // Check for newly unlocked perks
                 $newlyUnlockedPerks = [];
@@ -106,7 +106,7 @@ class StampCodeController extends Controller
                     if (!$existingClaim) {
                         PerkClaim::create([
                             'customer_id' => $customerId,
-                            'loyalty_card_id' => $loyaltyCardId,
+                            'loyalty_card_id' => $stampCode->loyalty_card_id,
                             'perk_id' => $perk->id,
                             'stamps_at_claim' => $totalStamps,
                             'is_redeemed' => false,
@@ -120,13 +120,13 @@ class StampCodeController extends Controller
                 if ($totalStamps >= $loyaltyCard->stampsNeeded) {
                     // Get all stamps for this completion
                     $usedStamps = StampCode::where('customer_id', $customerId)
-                        ->where('loyalty_card_id', $loyaltyCardId)
+                        ->where('loyalty_card_id', $stampCode->loyalty_card_id)
                         ->whereNotNull('used_at')
                         ->get();
 
                     // Count previous completions
                     $previousCompletions = CompletedLoyaltyCard::where('customer_id', $customerId)
-                        ->where('loyalty_card_id', $loyaltyCardId)
+                        ->where('loyalty_card_id', $stampCode->loyalty_card_id)
                         ->count();
 
                     // Create stamps data array
@@ -141,7 +141,7 @@ class StampCodeController extends Controller
                     // Create completion record
                     CompletedLoyaltyCard::create([
                         'customer_id' => $customerId,
-                        'loyalty_card_id' => $loyaltyCardId,
+                        'loyalty_card_id' => $stampCode->loyalty_card_id,
                         'stamps_collected' => $totalStamps,
                         'completed_at' => now(),
                         'card_cycle' => $previousCompletions + 1,
@@ -150,7 +150,7 @@ class StampCodeController extends Controller
 
                     // Delete used stamps
                     StampCode::where('customer_id', $customerId)
-                        ->where('loyalty_card_id', $loyaltyCardId)
+                        ->where('loyalty_card_id', $stampCode->loyalty_card_id)
                         ->whereNotNull('used_at')
                         ->delete();
 
@@ -161,7 +161,7 @@ class StampCodeController extends Controller
 
                     return back()->with([
                         'success' => true,
-                        'active_card_id' => $loyaltyCardId,
+                        'active_card_id' => $stampCode->loyalty_card_id,
                         'card_completed' => true,
                         'message' => $message,
                         'cycle_number' => $previousCompletions + 1,
@@ -176,7 +176,7 @@ class StampCodeController extends Controller
 
                 return back()->with([
                     'success' => true,
-                    'active_card_id' => $loyaltyCardId,
+                    'active_card_id' => $stampCode->loyalty_card_id,
                     'card_completed' => false,
                     'message' => $message,
                     'stamps_remaining' => $loyaltyCard->stampsNeeded - $totalStamps,
@@ -184,6 +184,7 @@ class StampCodeController extends Controller
                 ]);
             });
         } catch (\Exception $e) {
+            dd($e);
             return back()->withErrors(['error' => 'Failed to record stamp. Please try again.']);
         }
     }
