@@ -105,21 +105,39 @@ export default function Welcome() {
     return (
         <>
             {/* SEO HEAD TAGS - THIS IS THE MOST IMPORTANT PART */}
-           <Head>
-                <title>StampBayan - Free Digital Loyalty Card System for Philippine Businesses</title>
-                <meta name="title" content="StampBayan - Free Digital Loyalty Card System" />
-                <meta name="description" content="Modern customer loyalty program for Filipino businesses. 100% Free. Build customer relationships and boost repeat sales." />
-                <meta name="keywords" content="free loyalty program Philippines, customer loyalty card, digital stamp card, Filipino business tools" />
-                <link rel="canonical" href="https://www.stampbayan.com" />
-                <meta property="og:type" content="website" />
-                <meta property="og:url" content="https://www.stampbayan.com" />
-                <meta property="og:title" content="StampBayan - Free Digital Loyalty Card System" />
-                <meta property="og:description" content="Modern customer loyalty program for Filipino businesses. 100% Free." />
-                <meta property="og:image" content="https://www.stampbayan.com/images/og-image.jpg" />
-                <meta property="og:site_name" content="StampBayan" />
-                <meta property="og:locale" content="en_PH" />
-                <meta name="robots" content="index, follow" />
-            </Head>
+          <Head>
+    <title>StampBayan - Free Digital Loyalty Card System for Philippine Businesses</title>
+    <meta name="title" content="StampBayan - Free Digital Loyalty Card System" />
+    <meta name="description" content="StampBayan is a FREE digital loyalty card system for Philippine businesses. Replace paper punch cards with QR code scanning. Track customer analytics, boost repeat sales, and build lasting relationships. No setup fees, unlimited customers. Start in 5 minutes." />
+    <meta name="keywords" content="free loyalty program Philippines, customer loyalty card, digital stamp card, Filipino business tools" />
+    <link rel="canonical" href="https://www.stampbayan.com" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://www.stampbayan.com" />
+    <meta property="og:title" content="StampBayan - Free Digital Loyalty Card System" />
+    <meta property="og:description" content="StampBayan is a FREE digital loyalty card system for Philippine businesses. Replace paper punch cards with QR code scanning. Track customer analytics, boost repeat sales, and build lasting relationships. No setup fees, unlimited customers. Start in 5 minutes." />
+    <meta property="og:image" content="https://www.stampbayan.com/images/og-image.jpg" />
+    <meta property="og:site_name" content="StampBayan" />
+    <meta property="og:locale" content="en_PH" />
+    <meta name="robots" content="index, follow" />
+
+    <script type="application/ld+json">
+        {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "SoftwareApplication",
+            "name": "StampBayan",
+            "applicationCategory": "BusinessApplication",
+            "offers": {
+                "@type": "Offer",
+                "price": "0",
+                "priceCurrency": "PHP"
+            },
+            "description": "Free digital loyalty card system for Philippine businesses. Create, manage and track customer loyalty programs with QR code scanning.",
+            "operatingSystem": "Web-based",
+            "countryOfOrigin": "PH"
+        })}
+    </script>
+</Head>
+
 
             <div className="min-h-screen relative overflow-hidden bg-primary">
                 {/* Header */}
@@ -256,7 +274,7 @@ export default function Welcome() {
                                 The numbers speak for themselves
                             </p>
                         </div>
-                        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+                        <div className="grid md:grid-cols-3 gap-6 lg:gap-8">
                             <div className="bg-white/10 backdrop-blur-md shadow-lg rounded-2xl p-6 border border-white/20">
                                 <div className="flex items-center gap-4 mb-4">
                                     <div className="w-12 h-12 rounded-xl bg-green-400/20 flex items-center justify-center">
