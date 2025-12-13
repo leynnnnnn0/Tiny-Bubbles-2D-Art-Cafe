@@ -21,7 +21,7 @@ import APP from '../../images/app.png';
 import LOGO from '../../images/mainLogo.png';
 import { router } from '@inertiajs/react';
 import BUSINESSPOV from "../../videos/business pov.mov";
-import CUSTOMERPOV from "../../videos/customer pov.mov";
+import CUSTOMERPOV from "../../videos/customer pov.mov"; 
 import CUSTOMERTHUMBNAIL from "../../images/customer thumbnail.png";
 import BUSINESSTHUMBANAIL from "../../images/business thumbnail.png";
 import { MessageSquare, X, Send } from 'lucide-react';

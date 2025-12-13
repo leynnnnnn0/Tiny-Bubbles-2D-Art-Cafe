@@ -116,7 +116,7 @@ export default function Show({ customer }: Props) {
                                     <div key={stampCode.id}>
                                         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 py-3">
                                             <div className="flex-1 space-y-1">
-                                                <div className="flex items-center gap-2 flex-wrap">
+                                                <div className="flex items-center justify-between gap-2 flex-wrap">
                                                     <p className="font-semibold">{stampCode.loyalty_card.name}</p>
                                                     {stampCode.used_at ? (
                                                         <Badge variant="default" className="gap-1">
