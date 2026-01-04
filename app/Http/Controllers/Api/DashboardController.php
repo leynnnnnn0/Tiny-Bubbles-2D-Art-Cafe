@@ -87,7 +87,7 @@ class DashboardController extends Controller
                     'customers' => $business->customers->map(function($customer){
                         return [
                             'id' => $customer->id,
-                            'name' => $customer->name,
+                            'name' => $customer->username,
                             'email' => $customer->email,
                             'phone' => $customer->phone,
                             'created_at' => $customer->created_at,
