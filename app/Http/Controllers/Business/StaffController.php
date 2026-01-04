@@ -16,6 +16,8 @@ class StaffController extends Controller
     {
         $query = Staff::query();
 
+        $query->where('business_id', Auth::user()->business->id);
+
         // Search functionality
         if ($request->has('search') && $request->search) {
             $search = $request->search;

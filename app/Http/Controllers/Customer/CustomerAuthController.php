@@ -132,7 +132,7 @@ class CustomerAuthController extends Controller
     {
         if (! RateLimiter::tooManyAttempts($this->throttleKey($request), 5)) {
             return;
-        }
+        } 
 
         $seconds = RateLimiter::availableIn($this->throttleKey($request));
 
@@ -235,4 +235,10 @@ class CustomerAuthController extends Controller
             'email' => [__($status)],
         ]);
     }
+
+    public function getGuide()
+    {
+        return Inertia::render('Customer/Auth/Guide');
+    }
+
 }
