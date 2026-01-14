@@ -212,11 +212,34 @@ const handleUpdatePassword = (e: React.FormEvent) => {
     setMethodDialogOpen(true);
   };
 
+  function rootOrigin() {
+      const { protocol, hostname } = window.location;
+      return `${protocol}//${hostname.split('.').slice(-2).join('.')}`;
+  }
+
+
   const handleManualEntry = () => {
     setMethodDialogOpen(false);
     setRecordDialogOpen(true);
     setData('loyalty_card_id', currentCard?.id);
   };
+
+  const getCleanUrl = (originalUrl : string) => {
+      try {
+          const urlObj = new URL(originalUrl);
+          const hostParts = urlObj.hostname.split('.');
+
+          // Get the last two parts (e.g., 'stampbayan.com')
+          const baseDomain = hostParts.slice(-2).join('.');
+
+          // Reconstruct: Protocol + Base Domain + Pathname
+          return `${urlObj.protocol}//${baseDomain}${urlObj.pathname}`;
+      } catch (e) {
+          return originalUrl;
+      }
+  };
+
+
 
 const handleScanQR = async () => {
   setMethodDialogOpen(false);
@@ -515,101 +538,134 @@ useEffect(() => {
     const backgroundImageUrl = cardTemplate.backgroundImage ? `/${cardTemplate.backgroundImage}` : null;
 
     return (
-      <div 
-        className="rounded-lg shadow-2xl overflow-hidden cursor-pointer hover:shadow-xl transition-shadow"
-        onClick={() => setSelectedCompletedCard(completed)}
-      >
         <div
-          className="p-6 min-h-full flex items-center justify-center"
-          style={{
-            backgroundColor: cardTemplate.backgroundColor,
-            backgroundImage: backgroundImageUrl ? `url(${backgroundImageUrl})` : 'none',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center'
-          }}
+            className="cursor-pointer overflow-hidden rounded-lg shadow-2xl transition-shadow hover:shadow-xl"
+            onClick={() => setSelectedCompletedCard(completed)}
         >
-          <div className="backdrop-blur-sm p-3 rounded-lg" style={{ backgroundColor: backgroundImageUrl ? 'rgba(0,0,0,0.2)' : 'transparent' }}>
-            {/* Logo */}
-            {logoUrl && (
-              <div className="flex justify-center mb-3">
-                <img 
-                  src={logoUrl} 
-                  alt="Logo" 
-                  className="h-12 w-12 object-cover rounded-full border-2 border-white shadow-xl" 
-                />
-              </div>
-            )}
-
-            {/* Header with Trophy */}
-            <div className="flex items-center justify-between mb-3">
-              <div>
-                <h3 
-                  className="font-bold text-lg tracking-wide"
-                  style={{ color: cardTemplate.textColor }}
+            <div
+                className="flex min-h-full items-center justify-center p-6"
+                style={{
+                    backgroundColor: cardTemplate.backgroundColor,
+                    backgroundImage: backgroundImageUrl
+                        ? `url(${getCleanUrl(backgroundImageUrl)})`
+                        : 'none',
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                }}
+            >
+                <div
+                    className="rounded-lg p-3 backdrop-blur-sm"
+                    style={{
+                        backgroundColor: backgroundImageUrl
+                            ? 'rgba(0,0,0,0.2)'
+                            : 'transparent',
+                    }}
                 >
-                  {cardTemplate.heading}
-                </h3>
-                <p 
-                  className="text-xs opacity-90"
-                  style={{ color: cardTemplate.textColor }}
-                >
-                  Cycle #{completed.card_cycle}
-                </p>
-              </div>
-              <Trophy className="w-8 h-8 text-yellow-300 drop-shadow-lg" />
-            </div>
-            
-            {/* Completion Info */}
-            <div className="bg-white/95 backdrop-blur rounded-lg p-3 mb-4 shadow-lg">
-              <div className="flex items-center gap-2 mb-2">
-                <Award className="w-4 h-4 text-green-600" />
-                <span className="text-green-600 font-semibold text-sm">Completed</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Calendar className="w-4 h-4 text-gray-600" />
-                <span className="text-gray-700 text-xs">{formatCompletedDate(completed.completed_at)}</span>
-              </div>
-            </div>
+                    {/* Logo */}
+                    {logoUrl && (
+                        <div className="mb-3 flex justify-center">
+                            <img
+                                src={logoUrl}
+                                alt="Logo"
+                                className="h-12 w-12 rounded-full border-2 border-white object-cover shadow-xl"
+                            />
+                        </div>
+                    )}
 
-            {/* Stamps Grid - matching active card style */}
-            <div className="grid grid-cols-5 gap-2">
-              {Array.from({ length: completed.stamps_collected }).map((_, index) => {
-                const stampNumber = index + 1;
-                const perk = cardTemplate.perks?.find(p => p.stampNumber === stampNumber);
-                
-                return (
-                  <div key={index} className="flex flex-col items-center gap-1">
-                    <div className="w-10 h-10">
-                      <StampShape
-                        shape={cardTemplate.stampShape}
-                        isFilled={true}
-                        isReward={!!perk}
-                        rewardText={perk?.reward}
-                        color={perk ? perk.color : cardTemplate.stampColor}
-                        stampImage={cardTemplate.stampImage}
-
-                      />
+                    {/* Header with Trophy */}
+                    <div className="mb-3 flex items-center justify-between">
+                        <div>
+                            <h3
+                                className="text-lg font-bold tracking-wide"
+                                style={{ color: cardTemplate.textColor }}
+                            >
+                                {cardTemplate.heading}
+                            </h3>
+                            <p
+                                className="text-xs opacity-90"
+                                style={{ color: cardTemplate.textColor }}
+                            >
+                                Cycle #{completed.card_cycle}
+                            </p>
+                        </div>
+                        <Trophy className="h-8 w-8 text-yellow-300 drop-shadow-lg" />
                     </div>
-                    <span className="text-[9px] font-medium" style={{ color: cardTemplate.textColor }}>
-                      {stampNumber}
-                    </span>
-                  </div>
-                );
-              })}
-            </div>
 
-            {/* Footer */}
-            <div className="border-t mt-4 pt-2" style={{ borderColor: cardTemplate.textColor + '40' }}>
-              <p
-                className="text-center text-[9px] opacity-90 font-medium"
-                style={{ color: cardTemplate.textColor }}
-              >
-                {cardTemplate.footer}
-              </p>
+                    {/* Completion Info */}
+                    <div className="mb-4 rounded-lg bg-white/95 p-3 shadow-lg backdrop-blur">
+                        <div className="mb-2 flex items-center gap-2">
+                            <Award className="h-4 w-4 text-green-600" />
+                            <span className="text-sm font-semibold text-green-600">
+                                Completed
+                            </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <Calendar className="h-4 w-4 text-gray-600" />
+                            <span className="text-xs text-gray-700">
+                                {formatCompletedDate(completed.completed_at)}
+                            </span>
+                        </div>
+                    </div>
+
+                    {/* Stamps Grid - matching active card style */}
+                    <div className="grid grid-cols-5 gap-2">
+                        {Array.from({ length: completed.stamps_collected }).map(
+                            (_, index) => {
+                                const stampNumber = index + 1;
+                                const perk = cardTemplate.perks?.find(
+                                    (p) => p.stampNumber === stampNumber,
+                                );
+
+                                return (
+                                    <div
+                                        key={index}
+                                        className="flex flex-col items-center gap-1"
+                                    >
+                                        <div className="h-10 w-10">
+                                            <StampShape
+                                                shape={cardTemplate.stampShape}
+                                                isFilled={true}
+                                                isReward={!!perk}
+                                                rewardText={perk?.reward}
+                                                color={
+                                                    perk
+                                                        ? perk.color
+                                                        : cardTemplate.stampColor
+                                                }
+                                                stampImage={
+                                                    cardTemplate.stampImage
+                                                }
+                                            />
+                                        </div>
+                                        <span
+                                            className="text-[9px] font-medium"
+                                            style={{
+                                                color: cardTemplate.textColor,
+                                            }}
+                                        >
+                                            {stampNumber}
+                                        </span>
+                                    </div>
+                                );
+                            },
+                        )}
+                    </div>
+
+                    {/* Footer */}
+                    <div
+                        className="mt-4 border-t pt-2"
+                        style={{ borderColor: cardTemplate.textColor + '40' }}
+                    >
+                        <p
+                            className="text-center text-[9px] font-medium opacity-90"
+                            style={{ color: cardTemplate.textColor }}
+                        >
+                            {cardTemplate.footer}
+                        </p>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
     );
   };
 
@@ -777,690 +833,954 @@ useEffect(() => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-         {/* Profile Dialog */}
-<Dialog open={profileDialogOpen} onOpenChange={setProfileDialogOpen}>
-  <DialogContent className="sm:max-w-md">
-    <DialogHeader>
-      <DialogTitle>My Profile</DialogTitle>
-      <DialogDescription>
-        Update your account information
-      </DialogDescription>
-    </DialogHeader>
-    
-    <Tabs value={profileTab} onValueChange={setProfileTab}>
-      <TabsList className="grid w-full grid-cols-2">
-        <TabsTrigger value="info">Account Info</TabsTrigger>
-        <TabsTrigger value="password">Password</TabsTrigger>
-      </TabsList>
-      
-      <TabsContent value="info" className="space-y-4 mt-4">
-        <form onSubmit={handleUpdateProfile} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="username">Username</Label>
-            <Input
-              id="username"
-              value={profileData.username}
-              onChange={(e) => setProfileData('username', e.target.value)}
-              placeholder="Enter username"
-            />
-            {profileErrors.username && (
-              <p className="text-sm text-destructive">{profileErrors.username}</p>
-            )}
-          </div>
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+          {/* Profile Dialog */}
+          <Dialog open={profileDialogOpen} onOpenChange={setProfileDialogOpen}>
+              <DialogContent className="sm:max-w-md">
+                  <DialogHeader>
+                      <DialogTitle>My Profile</DialogTitle>
+                      <DialogDescription>
+                          Update your account information
+                      </DialogDescription>
+                  </DialogHeader>
 
-          
-          <div className="flex justify-end gap-2 pt-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setProfileDialogOpen(false)}
-            >
-              Cancel
-            </Button>
-            <Button type="submit" disabled={profileProcessing}>
-              {profileProcessing ? 'Saving...' : 'Save Changes'}
-            </Button>
-          </div>
-        </form>
-      </TabsContent>
-      
-      <TabsContent value="password" className="space-y-4 mt-4">
-        <form onSubmit={handleUpdatePassword} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="current_password">Current Password</Label>
-            <Input
-              id="current_password"
-              type="password"
-              value={passwordData.current_password}
-              onChange={(e) => setPasswordData('current_password', e.target.value)}
-              placeholder="Enter current password"
-            />
-            {passwordErrors.current_password && (
-              <p className="text-sm text-destructive">{passwordErrors.current_password}</p>
-            )}
-          </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="new_password">New Password</Label>
-            <Input
-              id="new_password"
-              type="password"
-              value={passwordData.password}
-              onChange={(e) => setPasswordData('password', e.target.value)}
-              placeholder="Enter new password"
-            />
-            {passwordErrors.password && (
-              <p className="text-sm text-destructive">{passwordErrors.password}</p>
-            )}
-          </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="password_confirmation">Confirm New Password</Label>
-            <Input
-              id="password_confirmation"
-              type="password"
-              value={passwordData.password_confirmation}
-              onChange={(e) => setPasswordData('password_confirmation', e.target.value)}
-              placeholder="Confirm new password"
-            />
-            {passwordErrors.password_confirmation && (
-              <p className="text-sm text-destructive">{passwordErrors.password_confirmation}</p>
-            )}
-          </div>
-          
-          <div className="flex justify-end gap-2 pt-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => {
-                setProfileTab('info');
-                resetPassword();
-              }}
-            >
-              Cancel
-            </Button>
-            <Button type="submit" disabled={passwordProcessing}>
-              {passwordProcessing ? 'Updating...' : 'Update Password'}
-            </Button>
-          </div>
-        </form>
-      </TabsContent>
-    </Tabs>
-  </DialogContent>
-</Dialog>
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200 shadow-sm">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-8">
-           <div className="rounded-xl flex items-center justify-center">
-                 <img src={LOGO} alt="business logo" className='h-12'/>
-              </div>
-            <nav className="hidden sm:flex gap-8">
-              <button className="text-primary font-semibold border-b-2 border-primary pb-1">
-                Home
-              </button>
-            </nav>
-          </div>
-          <div className="flex items-center gap-4">
-            <Button 
-              onClick={handleRecordStamp}
-              className="bg-primary text-white hover:bg-primary/70"
-              size="sm"
-            >
-              <Plus className="w-4 h-4" />
-              <span className="hidden sm:inline">Record Stamp</span>
-            </Button>
-            <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-              <DropdownMenu>
-                <DropdownMenuTrigger>
-                  <User className="w-5 h-5 text-gray-600 cursor-pointer" />
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                     <DropdownMenuItem onClick={() => setProfileDialogOpen(true)}>
-  Profile
-</DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => router.post('/customer/logout')}>
-                    Logout
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-          </div>
-        </div>
-      </header>
+                  <Tabs value={profileTab} onValueChange={setProfileTab}>
+                      <TabsList className="grid w-full grid-cols-2">
+                          <TabsTrigger value="info">Account Info</TabsTrigger>
+                          <TabsTrigger value="password">Password</TabsTrigger>
+                      </TabsList>
 
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-6 py-8">
-        <h1 className="sm:text-4xl text-xl font-bold text-primary mb-8">
-          {customerName} 👋
-        </h1>
-
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full max-w-md grid-cols-3">
-            <TabsTrigger value="home">Active Cards</TabsTrigger>
-              <TabsTrigger value="perks" className="flex items-center gap-2">
-    <Award className="w-4 h-4" />
-    My Perks ({perkClaims.length})
-  </TabsTrigger>
-            <TabsTrigger value="history" className="flex items-center gap-2">
-              <Trophy className="w-4 h-4" />
-              History ({completedCards.length})
-            </TabsTrigger>
-          </TabsList>
-
-          {/* Active Cards Tab */}
-          <TabsContent value="home" className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-              {/* Loyalty Card with Carousel */}
-              <Card className="lg:col-span-2 border-gray-200">
-                <CardHeader className="flex flex-row items-center justify-between">
-                  <CardTitle className="sm:text-lg text-sm font-semibold flex items-center gap-3">{currentCard.name.toUpperCase()}</CardTitle>
-                  {cardTemplates.length > 1 && (
-                    <div className="flex items-center gap-2">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={prevCard}
-                        className="sm:h-8 sm:w-8 sm:p-0 size-4"
-                      >
-                        <ChevronLeft className="sm:h-4 sm:w-4" />
-                      </Button>
-                      <span className="sm:text-sm text-gray-500 text-xs">
-                        {currentCardIndex + 1} / {cardTemplates.length}
-                      </span>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={nextCard}
-                        className="sm:h-8 sm:w-8 sm:p-0"
-                      >
-                        <ChevronRight className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  )}
-                </CardHeader>
-                <CardContent>
-                  <div className="mb-6">
-                    <div className="text-3xl font-bold text-black mb-1">
-                      {totalStamps} <span className="text-gray-400">/ {currentCard.stampsNeeded}</span>
-                    </div>
-                    <div className="text-sm text-gray-500">Total Stamps Accumulated</div>
-                    
-                    {totalStamps === currentCard.stampsNeeded && (
-                      <Badge className="mt-3 bg-green-500 text-white hover:bg-green-600">
-                        🎉 Card Complete! Ready for rewards
-                      </Badge>
-                    )}
-                    
-                    {/* Progress Bar */}
-                    <div className="w-full bg-gray-200 rounded-full h-2 mt-3">
-                      <div 
-                        className="bg-gradient-to-r from-black to-gray-700 h-2 rounded-full transition-all duration-500"
-                        style={{ width: `${(totalStamps / currentCard.stampsNeeded) * 100}%` }}
-                      ></div>
-                    </div>
-                  </div>
-
-                  {/* The Loyalty Card */}
-                  <div
-                    className="rounded-lg shadow-2xl overflow-hidden"
-                    style={{
-                      backgroundColor: currentCard.backgroundColor,
-                      backgroundImage: backgroundImageUrl ? `url(${backgroundImageUrl})` : 'none',
-                      backgroundSize: 'cover',
-                      backgroundPosition: 'center'
-                    }}
-                  >
-                    <div className="p-6 backdrop-blur-sm" style={{ backgroundColor: backgroundImageUrl ? 'rgba(0,0,0,0.2)' : 'transparent' }}>
-                      {/* Logo */}
-                      {logoUrl && (
-                        <div className="flex justify-center mb-4">
-                          <img 
-                            src={logoUrl} 
-                            alt="Logo" 
-                            className="h-16 w-16 object-cover rounded-full border-3 border-white shadow-xl" 
-                          />
-                        </div>
-                      )}
-
-                      {/* Heading */}
-                      <h3
-                        className="text-xl font-bold text-center mb-1 tracking-wider"
-                        style={{ color: currentCard.textColor }}
-                      >
-                        {currentCard.heading}
-                      </h3>
-
-                      {/* Subheading */}
-                      <p
-                        className="text-center text-xs mb-5 opacity-90"
-                        style={{ color: currentCard.textColor }}
-                      >
-                        {currentCard.subheading}
-                      </p>
-
-                      {/* Stamps Grid */}
-                      <div className="grid grid-cols-5 gap-2 mb-4"> 
-                        {Array.from({ length: currentCard.stampsNeeded }).map((_, index) => {
-                          const stampNumber = index + 1;
-                          const perk = getPerkForStamp(stampNumber);
-                          const isFilled = index < totalStamps;
-                          
-                          return (
-                            <div key={index} className="flex flex-col items-center gap-1">
-                              <div className="w-10 h-10">
-                                <StampShape
-                                  shape={currentCard.stampShape}
-                                  isFilled={isFilled}
-                                  isReward={!!perk}
-                                  rewardText={perk?.reward}
-                                  color={perk ? perk.color : currentCard.stampColor}
-                                />
+                      <TabsContent value="info" className="mt-4 space-y-4">
+                          <form
+                              onSubmit={handleUpdateProfile}
+                              className="space-y-4"
+                          >
+                              <div className="space-y-2">
+                                  <Label htmlFor="username">Username</Label>
+                                  <Input
+                                      id="username"
+                                      value={profileData.username}
+                                      onChange={(e) =>
+                                          setProfileData(
+                                              'username',
+                                              e.target.value,
+                                          )
+                                      }
+                                      placeholder="Enter username"
+                                  />
+                                  {profileErrors.username && (
+                                      <p className="text-sm text-destructive">
+                                          {profileErrors.username}
+                                      </p>
+                                  )}
                               </div>
-                              <span className="text-[9px] font-medium" style={{ color: currentCard.textColor }}>
-                                {stampNumber}
-                              </span>
-                            </div>
-                          );
-                        })}
-                      </div>
 
-                      {/* Mechanics */}
-                      <div className="bg-white/95 backdrop-blur rounded-lg p-3 mb-3 shadow-lg">
-                        <p className="text-[10px] text-gray-800 text-center leading-relaxed">
-                          {currentCard.mechanics}
-                        </p>
-                      </div>
+                              <div className="flex justify-end gap-2 pt-4">
+                                  <Button
+                                      type="button"
+                                      variant="outline"
+                                      onClick={() =>
+                                          setProfileDialogOpen(false)
+                                      }
+                                  >
+                                      Cancel
+                                  </Button>
+                                  <Button
+                                      type="submit"
+                                      disabled={profileProcessing}
+                                  >
+                                      {profileProcessing
+                                          ? 'Saving...'
+                                          : 'Save Changes'}
+                                  </Button>
+                              </div>
+                          </form>
+                      </TabsContent>
 
-                      {/* Footer */}
-                      <div className="border-t pt-2" style={{ borderColor: currentCard.textColor + '40' }}>
-                        <p
-                          className="text-center text-[9px] opacity-90 font-medium"
-                          style={{ color: currentCard.textColor }}
-                        >
-                          {currentCard.footer}
-                        </p>
+                      <TabsContent value="password" className="mt-4 space-y-4">
+                          <form
+                              onSubmit={handleUpdatePassword}
+                              className="space-y-4"
+                          >
+                              <div className="space-y-2">
+                                  <Label htmlFor="current_password">
+                                      Current Password
+                                  </Label>
+                                  <Input
+                                      id="current_password"
+                                      type="password"
+                                      value={passwordData.current_password}
+                                      onChange={(e) =>
+                                          setPasswordData(
+                                              'current_password',
+                                              e.target.value,
+                                          )
+                                      }
+                                      placeholder="Enter current password"
+                                  />
+                                  {passwordErrors.current_password && (
+                                      <p className="text-sm text-destructive">
+                                          {passwordErrors.current_password}
+                                      </p>
+                                  )}
+                              </div>
+
+                              <div className="space-y-2">
+                                  <Label htmlFor="new_password">
+                                      New Password
+                                  </Label>
+                                  <Input
+                                      id="new_password"
+                                      type="password"
+                                      value={passwordData.password}
+                                      onChange={(e) =>
+                                          setPasswordData(
+                                              'password',
+                                              e.target.value,
+                                          )
+                                      }
+                                      placeholder="Enter new password"
+                                  />
+                                  {passwordErrors.password && (
+                                      <p className="text-sm text-destructive">
+                                          {passwordErrors.password}
+                                      </p>
+                                  )}
+                              </div>
+
+                              <div className="space-y-2">
+                                  <Label htmlFor="password_confirmation">
+                                      Confirm New Password
+                                  </Label>
+                                  <Input
+                                      id="password_confirmation"
+                                      type="password"
+                                      value={passwordData.password_confirmation}
+                                      onChange={(e) =>
+                                          setPasswordData(
+                                              'password_confirmation',
+                                              e.target.value,
+                                          )
+                                      }
+                                      placeholder="Confirm new password"
+                                  />
+                                  {passwordErrors.password_confirmation && (
+                                      <p className="text-sm text-destructive">
+                                          {passwordErrors.password_confirmation}
+                                      </p>
+                                  )}
+                              </div>
+
+                              <div className="flex justify-end gap-2 pt-4">
+                                  <Button
+                                      type="button"
+                                      variant="outline"
+                                      onClick={() => {
+                                          setProfileTab('info');
+                                          resetPassword();
+                                      }}
+                                  >
+                                      Cancel
+                                  </Button>
+                                  <Button
+                                      type="submit"
+                                      disabled={passwordProcessing}
+                                  >
+                                      {passwordProcessing
+                                          ? 'Updating...'
+                                          : 'Update Password'}
+                                  </Button>
+                              </div>
+                          </form>
+                      </TabsContent>
+                  </Tabs>
+              </DialogContent>
+          </Dialog>
+          {/* Header */}
+          <header className="border-b border-gray-200 bg-white shadow-sm">
+              <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+                  <div className="flex items-center gap-8">
+                      <div className="flex items-center justify-center rounded-xl">
+                          <img
+                              src={LOGO}
+                              alt="business logo"
+                              className="h-12"
+                          />
                       </div>
-                    </div>
+                      <nav className="hidden gap-8 sm:flex">
+                          <button className="border-b-2 border-primary pb-1 font-semibold text-primary">
+                              Home
+                          </button>
+                      </nav>
                   </div>
-                </CardContent>
-              </Card>
-
-              {/* Recent Stamps for Current Card */}
-              <Card className="border-gray-200">
-                <CardHeader>
-                  <CardTitle className="text-lg font-semibold">Recent Stamps</CardTitle>
-                </CardHeader>
-                <CardContent className="h-[400px] overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full">
-                  {currentCardStamps.length > 0 ? (
-                    <div className="space-y-4">
-                      {currentCardStamps.map((stamp) => (
-                        <div key={stamp.id} className="flex items-center gap-3 border-b pb-3">
-                          <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                            <ShoppingCart className="w-5 h-5 text-black" />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="font-medium text-sm text-black">{currentCard.name}</div>
-                            <div className="text-xs text-gray-700">{formatDate(stamp.used_at)}</div>
-                          </div>
-                          <div className="text-right">
-                            <Badge variant="secondary" className="text-xs mb-1 bg-green-100 text-green-800 hover:bg-green-100">
-                              Success
-                            </Badge>
-                            <div className="text-xs text-gray-500">1 Stamp</div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="flex items-center justify-center h-full">
-                      <p className="text-sm text-gray-500">No stamps collected yet</p>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Awards Awaiting for Current Card */}
-            <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-xl font-semibold text-black">Awards Awaiting</h2>
-            </div>
-
-            <Card className="border-gray-200">
-              <CardContent className="space-y-4">
-                {currentCardPerks.length > 0 ? (
-                  currentCardPerks.map((perk) => (
-                    <div key={perk.id} className="flex flex-col items-start md:items-center md:flex-row border-b gap-4 hover:bg-gray-50 p-3 rounded-lg transition-colors cursor-pointer">
-                      <div 
-                        className="md:w-12 md:h-12 size-8 rounded-xl flex items-center justify-center flex-shrink-0 text-white font-bold"
-                        style={{ backgroundColor: perk.color }}
+                  <div className="flex items-center gap-4">
+                      <Button
+                          onClick={handleRecordStamp}
+                          className="bg-primary text-white hover:bg-primary/70"
+                          size="sm"
                       >
-                        {perk.stampNumber}
+                          <Plus className="h-4 w-4" />
+                          <span className="hidden sm:inline">Record Stamp</span>
+                      </Button>
+                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200">
+                          <DropdownMenu>
+                              <DropdownMenuTrigger>
+                                  <User className="h-5 w-5 cursor-pointer text-gray-600" />
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent>
+                                  <DropdownMenuLabel>
+                                      My Account
+                                  </DropdownMenuLabel>
+                                  <DropdownMenuSeparator />
+                                  <DropdownMenuItem
+                                      onClick={() => setProfileDialogOpen(true)}
+                                  >
+                                      Profile
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem
+                                      onClick={() =>
+                                          router.post('/customer/logout')
+                                      }
+                                  >
+                                      Logout
+                                  </DropdownMenuItem>
+                              </DropdownMenuContent>
+                          </DropdownMenu>
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-semibold sm:text-base text-sm text-black">{perk.reward}</h3>
-                        <p className="text-xs text-gray-500">Unlock at {perk.stampNumber} stamps</p>
-                        {perk.details && (
-                          <p className="md:text-sm text-xs text-gray-600 mt-1">{perk.details}</p>
-                        )}
-                      </div>
-                      <div className="text-right flex-shrink-0">
-                        <div className="flex items-baseline gap-1">
-                          <span className="md:text-2xl text-lg font-bold text-black">{perk.stampNumber}</span>
-                          <span className="md:text-sm text-xs text-gray-500">Stamps</span>
-                        </div>
-                        {totalStamps >= perk.stampNumber && (
-                          <Badge className="mt-2 bg-green-500 text-white hover:bg-green-600">
-                            Unlocked!
-                          </Badge>
-                        )}
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <div className="text-center py-8">
-                    <p className="text-gray-500">No rewards available for this card</p>
                   </div>
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Perks Tab */}
-<TabsContent value="perks" className="space-y-6">
-  <div className="mb-4">
-    <h2 className="text-2xl font-bold text-gray-900">My Rewards</h2>
-    <p className="text-gray-500 mt-1">View and manage your unlocked rewards</p>
-  </div>
-
-  {perkClaims.length > 0 ? (
-    <div className="grid gap-4">
-      {perkClaims.map((claim) => (
-        <Card key={claim.id} className="border-gray-200">
-          <CardContent className="p-6">
-            <div className="flex items-start gap-4">
-              {/* Logo */}
-              <div className="flex-shrink-0">
-                {claim.loyalty_card.logo ? (
-                  <img 
-                    src={`/${claim.loyalty_card.logo}`}
-                    alt={claim.loyalty_card.name}
-                    className="w-16 h-16 rounded-full object-cover border-2 border-gray-200"
-                  />
-                ) : (
-                  <div className="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center">
-                    <Award className="w-8 h-8 text-gray-400" />
-                  </div>
-                )}
               </div>
+          </header>
 
-              {/* Content */}
-              <div className="flex-1 min-w-0">
-                <div className="flex items-start justify-between mb-2">
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-900">
-                      {claim.perk.reward}
-                    </h3>
-                    <p className="text-sm text-gray-500">
-                      {claim.loyalty_card.name}
-                    </p>
-                  </div>
-                  {claim.is_redeemed ? (
-                    <Badge className="bg-gray-500 text-white hover:bg-gray-600">
-                      Redeemed
-                    </Badge>
-                  ) : (
-                    <Badge className="bg-green-500 text-white hover:bg-green-600">
-                      Available
-                    </Badge>
-                  )}
-                </div>
+          {/* Main Content */}
+          <main className="mx-auto max-w-7xl px-6 py-8">
+              <h1 className="mb-8 text-xl font-bold text-primary sm:text-4xl">
+                  {customerName} 👋
+              </h1>
 
-                {claim.perk.details && (
-                  <p className="text-sm text-gray-600 mb-3">
-                    {claim.perk.details}
-                  </p>
-                )}
-
-                <div className="flex flex-wrap gap-4 text-xs text-gray-500">
-                  <div className="flex items-center gap-1">
-                    <Sparkles className="w-4 h-4" />
-                    <span>Unlocked with {claim.stamps_at_claim} stamps</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Calendar className="w-4 h-4" />
-                    <span>Claimed {formatDate(claim.created_at)}</span>
-                  </div>
-                  {claim.is_redeemed && claim.redeemed_at && (
-                    <div className="flex items-center gap-1">
-                      <Trophy className="w-4 h-4" />
-                      <span>Redeemed {formatDate(claim.redeemed_at)}</span>
-                    </div>
-                  )}
-                </div>
-
-                {claim.remarks && (
-                  <div className="mt-3 p-3 bg-blue-50 rounded-lg">
-                    <p className="text-sm text-blue-900">
-                      <span className="font-semibold">Note:</span> {claim.remarks}
-                    </p>
-                  </div>
-                )}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      ))}
-    </div>
-  ) : (
-    <Card className="border-gray-200">
-      <CardContent className="p-12 text-center">
-        <Award className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-        <h3 className="text-xl font-semibold text-gray-900 mb-2">No Rewards Yet</h3>
-        <p className="text-gray-500">
-          Keep collecting stamps to unlock exciting rewards!
-        </p>
-      </CardContent>
-    </Card>
-  )}
-</TabsContent>
-
-          {/* History Tab */}
-          <TabsContent value="history" className="space-y-6">
-            <div className="mb-4">
-              <h2 className="text-2xl font-bold text-gray-900">Completed Cards</h2>
-              <p className="text-gray-500 mt-1">Your achievement history - {completedCards.length} cards completed</p>
-            </div>
-
-            {completedCards.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {completedCards.map((completed) => (
-                  <CompletedCardPreview key={completed.id} completed={completed} />
-                ))}
-              </div>
-            ) : (
-              <Card className="border-gray-200">
-                <CardContent className="p-12 text-center">
-                  <Trophy className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2">No Completed Cards Yet</h3>
-                  <p className="text-gray-500">Complete your first card to see it here!</p>
-                </CardContent>
-              </Card>
-            )}
-          </TabsContent>
-        </Tabs>
-      </main>
-
-      {/* Method Selection Dialog */}
-      <Dialog open={methodDialogOpen} onOpenChange={setMethodDialogOpen}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Record Stamp</DialogTitle>
-            <DialogDescription>
-              Choose how you want to record your stamp
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid grid-cols-2 gap-4 py-4">
-            <Button
-              onClick={handleScanQR}
-              className="h-32 flex flex-col gap-3"
-              variant="outline"
-            >
-              <Camera className="w-8 h-8" />
-              <span>Scan QR Code</span>
-            </Button>
-            <Button
-              onClick={handleManualEntry}
-              className="h-32 flex flex-col gap-3"
-              variant="outline"
-            >
-              <Type className="w-8 h-8" />
-              <span>Enter Manually</span>
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Manual Entry Dialog */}
-      <Dialog open={recordDialogOpen} onOpenChange={setRecordDialogOpen}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Enter Stamp Code</DialogTitle>
-            <DialogDescription>
-              Enter the code provided by the business
-            </DialogDescription>
-          </DialogHeader>
-          <div onSubmit={handleSubmitCode}>
-            <div className="grid gap-4 py-4">
-              <div className="grid gap-2">
-                <Label htmlFor="code">Stamp Code</Label>
-                <Input
-                  id="code"
-                  placeholder="Enter code here"
-                  value={data.code}
-                  onChange={(e) => setData('code', e.target.value)}
-                  className="uppercase"
-                  required
-                />
-                {errors.code && (
-                  <div className="text-xs text-destructive">{errors.code}</div>
-                )}
-              </div>
-            </div>
-            <div className="flex justify-end gap-3">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setRecordDialogOpen(false)}
+              <Tabs
+                  value={activeTab}
+                  onValueChange={setActiveTab}
+                  className="space-y-6"
               >
-                Cancel
-              </Button>
-              <Button onClick={handleSubmitCode} disabled={processing}>
-                {processing ? 'Recording...' : 'Record Stamp'}
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+                  <TabsList className="grid w-full max-w-md grid-cols-3">
+                      <TabsTrigger value="home">Active Cards</TabsTrigger>
+                      <TabsTrigger
+                          value="perks"
+                          className="flex items-center gap-2"
+                      >
+                          <Award className="h-4 w-4" />
+                          My Perks ({perkClaims.length})
+                      </TabsTrigger>
+                      <TabsTrigger
+                          value="history"
+                          className="flex items-center gap-2"
+                      >
+                          <Trophy className="h-4 w-4" />
+                          History ({completedCards.length})
+                      </TabsTrigger>
+                  </TabsList>
 
-   {/* QR Scanner Dialog */}
-    <Dialog open={scanDialogOpen} onOpenChange={(open) => {
-      if (!open) stopCamera();
-    }}>
-      <DialogContent className="sm:max-w-lg">
-        <DialogHeader>
-          <DialogTitle>Scan QR Code</DialogTitle>
-          <DialogDescription>
-            Position the QR code within the frame
-          </DialogDescription>
-        </DialogHeader>
-        <div className="py-4">
-          <div className="relative bg-black rounded-lg overflow-hidden aspect-square">
-            <video
-              ref={videoRef}
-              autoPlay
-              playsInline
-              muted
-              className="w-full h-full object-cover"
-            />
-            {scanning && (
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="w-64 h-64 border-4 border-white rounded-lg shadow-lg">
-                  {/* Scanning corners */}
-                  <div className="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-green-500"></div>
-                  <div className="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-green-500"></div>
-                  <div className="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-green-500"></div>
-                  <div className="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-green-500"></div>
-                </div>
-                <div className="absolute bottom-4 left-0 right-0 text-center">
-                  <p className="text-white text-sm bg-black bg-opacity-50 px-4 py-2 rounded-lg inline-block">
-                    Scanning for QR code...
-                  </p>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-        <div className="flex justify-end">
-          <Button variant="outline" onClick={stopCamera}>
-            Cancel
-          </Button>
-        </div>
-      </DialogContent>
-    </Dialog>
+                  {/* Active Cards Tab */}
+                  <TabsContent value="home" className="space-y-6">
+                      <div className="mb-8 grid grid-cols-1 gap-6 lg:grid-cols-3">
+                          {/* Loyalty Card with Carousel */}
+                          <Card className="border-gray-200 lg:col-span-2">
+                              <CardHeader className="flex flex-row items-center justify-between">
+                                  <CardTitle className="flex items-center gap-3 text-sm font-semibold sm:text-lg">
+                                      {currentCard.name.toUpperCase()}
+                                  </CardTitle>
+                                  {cardTemplates.length > 1 && (
+                                      <div className="flex items-center gap-2">
+                                          <Button
+                                              variant="ghost"
+                                              size="sm"
+                                              onClick={prevCard}
+                                              className="size-4 sm:h-8 sm:w-8 sm:p-0"
+                                          >
+                                              <ChevronLeft className="sm:h-4 sm:w-4" />
+                                          </Button>
+                                          <span className="text-xs text-gray-500 sm:text-sm">
+                                              {currentCardIndex + 1} /{' '}
+                                              {cardTemplates.length}
+                                          </span>
+                                          <Button
+                                              variant="ghost"
+                                              size="sm"
+                                              onClick={nextCard}
+                                              className="sm:h-8 sm:w-8 sm:p-0"
+                                          >
+                                              <ChevronRight className="h-4 w-4" />
+                                          </Button>
+                                      </div>
+                                  )}
+                              </CardHeader>
+                              <CardContent>
+                                  <div className="mb-6">
+                                      <div className="mb-1 text-3xl font-bold text-black">
+                                          {totalStamps}{' '}
+                                          <span className="text-gray-400">
+                                              / {currentCard.stampsNeeded}
+                                          </span>
+                                      </div>
+                                      <div className="text-sm text-gray-500">
+                                          Total Stamps Accumulated
+                                      </div>
 
+                                      {totalStamps ===
+                                          currentCard.stampsNeeded && (
+                                          <Badge className="mt-3 bg-green-500 text-white hover:bg-green-600">
+                                              🎉 Card Complete! Ready for
+                                              rewards
+                                          </Badge>
+                                      )}
 
-      {/* Completed Card Detail Dialog */}
-      <Dialog open={!!selectedCompletedCard} onOpenChange={() => setSelectedCompletedCard(null)}>
-        <DialogContent className="sm:max-w-2xl max-h-[80vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Trophy className="w-5 h-5 text-yellow-500" />
-              Completed Card Details
-            </DialogTitle>
-          </DialogHeader>
-          {selectedCompletedCard && (
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4 p-4 bg-gray-50 rounded-lg">
-                <div>
-                  <p className="text-sm text-gray-500">Loyalty Card</p>
-                  <p className="font-semibold">{selectedCompletedCard.loyalty_card_name}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Cycle Number</p>
-                  <p className="font-semibold">#{selectedCompletedCard.card_cycle}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Stamps Collected</p>
-                  <p className="font-semibold">{selectedCompletedCard.stamps_collected}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Completed On</p>
-                  <p className="font-semibold">{formatCompletedDate(selectedCompletedCard.completed_at)}</p>
-                </div>
-              </div>
+                                      {/* Progress Bar */}
+                                      <div className="mt-3 h-2 w-full rounded-full bg-gray-200">
+                                          <div
+                                              className="h-2 rounded-full bg-gradient-to-r from-black to-gray-700 transition-all duration-500"
+                                              style={{
+                                                  width: `${(totalStamps / currentCard.stampsNeeded) * 100}%`,
+                                              }}
+                                          ></div>
+                                      </div>
+                                  </div>
 
-              <div>
-                <h4 className="font-semibold mb-3">Stamp History</h4>
-                <div className="max-h-60 overflow-y-auto space-y-2">
-                  {JSON.parse(selectedCompletedCard.stamps_data).map((stamp, i) => (
-                    <div key={i} className="flex items-center justify-between p-2 bg-gray-50 rounded text-sm">
-                      <span className="font-mono text-gray-600">{stamp.code}</span>
-                      <span className="text-gray-500 text-xs">{formatDate(stamp.used_at)}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
+                                  {/* The Loyalty Card */}
+                                  <div
+                                      className="overflow-hidden rounded-lg shadow-2xl"
+                                      style={{
+                                          backgroundColor:
+                                              currentCard.backgroundColor,
+                                          backgroundImage: backgroundImageUrl
+                                              ? `url(${getCleanUrl(backgroundImageUrl)})`
+                                              : 'none',
+                                          backgroundSize: 'cover',
+                                          backgroundPosition: 'center',
+                                      }}
+                                  >
+                                      <div
+                                          className="p-6 backdrop-blur-sm"
+                                          style={{
+                                              backgroundColor:
+                                                  backgroundImageUrl
+                                                      ? 'rgba(0,0,0,0.2)'
+                                                      : 'transparent',
+                                          }}
+                                      >
+                                          {/* Logo */}
+                                          {logoUrl && (
+                                              <div className="mb-4 flex justify-center">
+                                                  <img
+                                                      src={logoUrl}
+                                                      alt="Logo"
+                                                      className="h-16 w-16 rounded-full border-3 border-white object-cover shadow-xl"
+                                                  />
+                                              </div>
+                                          )}
 
-   
+                                          {/* Heading */}
+                                          <h3
+                                              className="mb-1 text-center text-xl font-bold tracking-wider"
+                                              style={{
+                                                  color: currentCard.textColor,
+                                              }}
+                                          >
+                                              {currentCard.heading}
+                                          </h3>
 
-    </div>
+                                          {/* Subheading */}
+                                          <p
+                                              className="mb-5 text-center text-xs opacity-90"
+                                              style={{
+                                                  color: currentCard.textColor,
+                                              }}
+                                          >
+                                              {currentCard.subheading}
+                                          </p>
+
+                                          {/* Stamps Grid */}
+                                          <div className="mb-4 grid grid-cols-5 gap-2">
+                                              {Array.from({
+                                                  length: currentCard.stampsNeeded,
+                                              }).map((_, index) => {
+                                                  const stampNumber = index + 1;
+                                                  const perk =
+                                                      getPerkForStamp(
+                                                          stampNumber,
+                                                      );
+                                                  const isFilled =
+                                                      index < totalStamps;
+
+                                                  return (
+                                                      <div
+                                                          key={index}
+                                                          className="flex flex-col items-center gap-1"
+                                                      >
+                                                          <div className="h-10 w-10">
+                                                              <StampShape
+                                                                  shape={
+                                                                      currentCard.stampShape
+                                                                  }
+                                                                  isFilled={
+                                                                      isFilled
+                                                                  }
+                                                                  isReward={
+                                                                      !!perk
+                                                                  }
+                                                                  rewardText={
+                                                                      perk?.reward
+                                                                  }
+                                                                  color={
+                                                                      perk
+                                                                          ? perk.color
+                                                                          : currentCard.stampColor
+                                                                  }
+                                                              />
+                                                          </div>
+                                                          <span
+                                                              className="text-[9px] font-medium"
+                                                              style={{
+                                                                  color: currentCard.textColor,
+                                                              }}
+                                                          >
+                                                              {stampNumber}
+                                                          </span>
+                                                      </div>
+                                                  );
+                                              })}
+                                          </div>
+
+                                          {/* Mechanics */}
+                                          <div className="mb-3 rounded-lg bg-white/95 p-3 shadow-lg backdrop-blur">
+                                              <p className="text-center text-[10px] leading-relaxed text-gray-800">
+                                                  {currentCard.mechanics}
+                                              </p>
+                                          </div>
+
+                                          {/* Footer */}
+                                          <div
+                                              className="border-t pt-2"
+                                              style={{
+                                                  borderColor:
+                                                      currentCard.textColor +
+                                                      '40',
+                                              }}
+                                          >
+                                              <p
+                                                  className="text-center text-[9px] font-medium opacity-90"
+                                                  style={{
+                                                      color: currentCard.textColor,
+                                                  }}
+                                              >
+                                                  {currentCard.footer}
+                                              </p>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </CardContent>
+                          </Card>
+
+                          {/* Recent Stamps for Current Card */}
+                          <Card className="border-gray-200">
+                              <CardHeader>
+                                  <CardTitle className="text-lg font-semibold">
+                                      Recent Stamps
+                                  </CardTitle>
+                              </CardHeader>
+                              <CardContent className="h-[400px] overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-track]:bg-gray-100">
+                                  {currentCardStamps.length > 0 ? (
+                                      <div className="space-y-4">
+                                          {currentCardStamps.map((stamp) => (
+                                              <div
+                                                  key={stamp.id}
+                                                  className="flex items-center gap-3 border-b pb-3"
+                                              >
+                                                  <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-gray-100">
+                                                      <ShoppingCart className="h-5 w-5 text-black" />
+                                                  </div>
+                                                  <div className="min-w-0 flex-1">
+                                                      <div className="text-sm font-medium text-black">
+                                                          {currentCard.name}
+                                                      </div>
+                                                      <div className="text-xs text-gray-700">
+                                                          {formatDate(
+                                                              stamp.used_at,
+                                                          )}
+                                                      </div>
+                                                  </div>
+                                                  <div className="text-right">
+                                                      <Badge
+                                                          variant="secondary"
+                                                          className="mb-1 bg-green-100 text-xs text-green-800 hover:bg-green-100"
+                                                      >
+                                                          Success
+                                                      </Badge>
+                                                      <div className="text-xs text-gray-500">
+                                                          1 Stamp
+                                                      </div>
+                                                  </div>
+                                              </div>
+                                          ))}
+                                      </div>
+                                  ) : (
+                                      <div className="flex h-full items-center justify-center">
+                                          <p className="text-sm text-gray-500">
+                                              No stamps collected yet
+                                          </p>
+                                      </div>
+                                  )}
+                              </CardContent>
+                          </Card>
+                      </div>
+
+                      {/* Awards Awaiting for Current Card */}
+                      <div className="mb-4 flex items-center justify-between">
+                          <h2 className="text-xl font-semibold text-black">
+                              Awards Awaiting
+                          </h2>
+                      </div>
+
+                      <Card className="border-gray-200">
+                          <CardContent className="space-y-4">
+                              {currentCardPerks.length > 0 ? (
+                                  currentCardPerks.map((perk) => (
+                                      <div
+                                          key={perk.id}
+                                          className="flex cursor-pointer flex-col items-start gap-4 rounded-lg border-b p-3 transition-colors hover:bg-gray-50 md:flex-row md:items-center"
+                                      >
+                                          <div
+                                              className="flex size-8 flex-shrink-0 items-center justify-center rounded-xl font-bold text-white md:h-12 md:w-12"
+                                              style={{
+                                                  backgroundColor: perk.color,
+                                              }}
+                                          >
+                                              {perk.stampNumber}
+                                          </div>
+                                          <div className="min-w-0 flex-1">
+                                              <h3 className="text-sm font-semibold text-black sm:text-base">
+                                                  {perk.reward}
+                                              </h3>
+                                              <p className="text-xs text-gray-500">
+                                                  Unlock at {perk.stampNumber}{' '}
+                                                  stamps
+                                              </p>
+                                              {perk.details && (
+                                                  <p className="mt-1 text-xs text-gray-600 md:text-sm">
+                                                      {perk.details}
+                                                  </p>
+                                              )}
+                                          </div>
+                                          <div className="flex-shrink-0 text-right">
+                                              <div className="flex items-baseline gap-1">
+                                                  <span className="text-lg font-bold text-black md:text-2xl">
+                                                      {perk.stampNumber}
+                                                  </span>
+                                                  <span className="text-xs text-gray-500 md:text-sm">
+                                                      Stamps
+                                                  </span>
+                                              </div>
+                                              {totalStamps >=
+                                                  perk.stampNumber && (
+                                                  <Badge className="mt-2 bg-green-500 text-white hover:bg-green-600">
+                                                      Unlocked!
+                                                  </Badge>
+                                              )}
+                                          </div>
+                                      </div>
+                                  ))
+                              ) : (
+                                  <div className="py-8 text-center">
+                                      <p className="text-gray-500">
+                                          No rewards available for this card
+                                      </p>
+                                  </div>
+                              )}
+                          </CardContent>
+                      </Card>
+                  </TabsContent>
+
+                  {/* Perks Tab */}
+                  <TabsContent value="perks" className="space-y-6">
+                      <div className="mb-4">
+                          <h2 className="text-2xl font-bold text-gray-900">
+                              My Rewards
+                          </h2>
+                          <p className="mt-1 text-gray-500">
+                              View and manage your unlocked rewards
+                          </p>
+                      </div>
+
+                      {perkClaims.length > 0 ? (
+                          <div className="grid gap-4">
+                              {perkClaims.map((claim) => (
+                                  <Card
+                                      key={claim.id}
+                                      className="border-gray-200"
+                                  >
+                                      <CardContent className="p-6">
+                                          <div className="flex items-start gap-4">
+                                              {/* Logo */}
+                                              <div className="flex-shrink-0">
+                                                  {claim.loyalty_card.logo ? (
+                                                      <img
+                                                          src={`/${claim.loyalty_card.logo}`}
+                                                          alt={
+                                                              claim.loyalty_card
+                                                                  .name
+                                                          }
+                                                          className="h-16 w-16 rounded-full border-2 border-gray-200 object-cover"
+                                                      />
+                                                  ) : (
+                                                      <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gray-200">
+                                                          <Award className="h-8 w-8 text-gray-400" />
+                                                      </div>
+                                                  )}
+                                              </div>
+
+                                              {/* Content */}
+                                              <div className="min-w-0 flex-1">
+                                                  <div className="mb-2 flex items-start justify-between">
+                                                      <div>
+                                                          <h3 className="text-lg font-semibold text-gray-900">
+                                                              {
+                                                                  claim.perk
+                                                                      .reward
+                                                              }
+                                                          </h3>
+                                                          <p className="text-sm text-gray-500">
+                                                              {
+                                                                  claim
+                                                                      .loyalty_card
+                                                                      .name
+                                                              }
+                                                          </p>
+                                                      </div>
+                                                      {claim.is_redeemed ? (
+                                                          <Badge className="bg-gray-500 text-white hover:bg-gray-600">
+                                                              Redeemed
+                                                          </Badge>
+                                                      ) : (
+                                                          <Badge className="bg-green-500 text-white hover:bg-green-600">
+                                                              Available
+                                                          </Badge>
+                                                      )}
+                                                  </div>
+
+                                                  {claim.perk.details && (
+                                                      <p className="mb-3 text-sm text-gray-600">
+                                                          {claim.perk.details}
+                                                      </p>
+                                                  )}
+
+                                                  <div className="flex flex-wrap gap-4 text-xs text-gray-500">
+                                                      <div className="flex items-center gap-1">
+                                                          <Sparkles className="h-4 w-4" />
+                                                          <span>
+                                                              Unlocked with{' '}
+                                                              {
+                                                                  claim.stamps_at_claim
+                                                              }{' '}
+                                                              stamps
+                                                          </span>
+                                                      </div>
+                                                      <div className="flex items-center gap-1">
+                                                          <Calendar className="h-4 w-4" />
+                                                          <span>
+                                                              Claimed{' '}
+                                                              {formatDate(
+                                                                  claim.created_at,
+                                                              )}
+                                                          </span>
+                                                      </div>
+                                                      {claim.is_redeemed &&
+                                                          claim.redeemed_at && (
+                                                              <div className="flex items-center gap-1">
+                                                                  <Trophy className="h-4 w-4" />
+                                                                  <span>
+                                                                      Redeemed{' '}
+                                                                      {formatDate(
+                                                                          claim.redeemed_at,
+                                                                      )}
+                                                                  </span>
+                                                              </div>
+                                                          )}
+                                                  </div>
+
+                                                  {claim.remarks && (
+                                                      <div className="mt-3 rounded-lg bg-blue-50 p-3">
+                                                          <p className="text-sm text-blue-900">
+                                                              <span className="font-semibold">
+                                                                  Note:
+                                                              </span>{' '}
+                                                              {claim.remarks}
+                                                          </p>
+                                                      </div>
+                                                  )}
+                                              </div>
+                                          </div>
+                                      </CardContent>
+                                  </Card>
+                              ))}
+                          </div>
+                      ) : (
+                          <Card className="border-gray-200">
+                              <CardContent className="p-12 text-center">
+                                  <Award className="mx-auto mb-4 h-16 w-16 text-gray-300" />
+                                  <h3 className="mb-2 text-xl font-semibold text-gray-900">
+                                      No Rewards Yet
+                                  </h3>
+                                  <p className="text-gray-500">
+                                      Keep collecting stamps to unlock exciting
+                                      rewards!
+                                  </p>
+                              </CardContent>
+                          </Card>
+                      )}
+                  </TabsContent>
+
+                  {/* History Tab */}
+                  <TabsContent value="history" className="space-y-6">
+                      <div className="mb-4">
+                          <h2 className="text-2xl font-bold text-gray-900">
+                              Completed Cards
+                          </h2>
+                          <p className="mt-1 text-gray-500">
+                              Your achievement history - {completedCards.length}{' '}
+                              cards completed
+                          </p>
+                      </div>
+
+                      {completedCards.length > 0 ? (
+                          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                              {completedCards.map((completed) => (
+                                  <CompletedCardPreview
+                                      key={completed.id}
+                                      completed={completed}
+                                  />
+                              ))}
+                          </div>
+                      ) : (
+                          <Card className="border-gray-200">
+                              <CardContent className="p-12 text-center">
+                                  <Trophy className="mx-auto mb-4 h-16 w-16 text-gray-300" />
+                                  <h3 className="mb-2 text-xl font-semibold text-gray-900">
+                                      No Completed Cards Yet
+                                  </h3>
+                                  <p className="text-gray-500">
+                                      Complete your first card to see it here!
+                                  </p>
+                              </CardContent>
+                          </Card>
+                      )}
+                  </TabsContent>
+              </Tabs>
+          </main>
+
+          {/* Method Selection Dialog */}
+          <Dialog open={methodDialogOpen} onOpenChange={setMethodDialogOpen}>
+              <DialogContent className="sm:max-w-md">
+                  <DialogHeader>
+                      <DialogTitle>Record Stamp</DialogTitle>
+                      <DialogDescription>
+                          Choose how you want to record your stamp
+                      </DialogDescription>
+                  </DialogHeader>
+                  <div className="grid grid-cols-2 gap-4 py-4">
+                      <Button
+                          onClick={handleScanQR}
+                          className="flex h-32 flex-col gap-3"
+                          variant="outline"
+                      >
+                          <Camera className="h-8 w-8" />
+                          <span>Scan QR Code</span>
+                      </Button>
+                      <Button
+                          onClick={handleManualEntry}
+                          className="flex h-32 flex-col gap-3"
+                          variant="outline"
+                      >
+                          <Type className="h-8 w-8" />
+                          <span>Enter Manually</span>
+                      </Button>
+                  </div>
+              </DialogContent>
+          </Dialog>
+
+          {/* Manual Entry Dialog */}
+          <Dialog open={recordDialogOpen} onOpenChange={setRecordDialogOpen}>
+              <DialogContent className="sm:max-w-md">
+                  <DialogHeader>
+                      <DialogTitle>Enter Stamp Code</DialogTitle>
+                      <DialogDescription>
+                          Enter the code provided by the business
+                      </DialogDescription>
+                  </DialogHeader>
+                  <div onSubmit={handleSubmitCode}>
+                      <div className="grid gap-4 py-4">
+                          <div className="grid gap-2">
+                              <Label htmlFor="code">Stamp Code</Label>
+                              <Input
+                                  id="code"
+                                  placeholder="Enter code here"
+                                  value={data.code}
+                                  onChange={(e) =>
+                                      setData('code', e.target.value)
+                                  }
+                                  className="uppercase"
+                                  required
+                              />
+                              {errors.code && (
+                                  <div className="text-xs text-destructive">
+                                      {errors.code}
+                                  </div>
+                              )}
+                          </div>
+                      </div>
+                      <div className="flex justify-end gap-3">
+                          <Button
+                              type="button"
+                              variant="outline"
+                              onClick={() => setRecordDialogOpen(false)}
+                          >
+                              Cancel
+                          </Button>
+                          <Button
+                              onClick={handleSubmitCode}
+                              disabled={processing}
+                          >
+                              {processing ? 'Recording...' : 'Record Stamp'}
+                          </Button>
+                      </div>
+                  </div>
+              </DialogContent>
+          </Dialog>
+
+          {/* QR Scanner Dialog */}
+          <Dialog
+              open={scanDialogOpen}
+              onOpenChange={(open) => {
+                  if (!open) stopCamera();
+              }}
+          >
+              <DialogContent className="sm:max-w-lg">
+                  <DialogHeader>
+                      <DialogTitle>Scan QR Code</DialogTitle>
+                      <DialogDescription>
+                          Position the QR code within the frame
+                      </DialogDescription>
+                  </DialogHeader>
+                  <div className="py-4">
+                      <div className="relative aspect-square overflow-hidden rounded-lg bg-black">
+                          <video
+                              ref={videoRef}
+                              autoPlay
+                              playsInline
+                              muted
+                              className="h-full w-full object-cover"
+                          />
+                          {scanning && (
+                              <div className="absolute inset-0 flex items-center justify-center">
+                                  <div className="h-64 w-64 rounded-lg border-4 border-white shadow-lg">
+                                      {/* Scanning corners */}
+                                      <div className="absolute top-0 left-0 h-8 w-8 border-t-4 border-l-4 border-green-500"></div>
+                                      <div className="absolute top-0 right-0 h-8 w-8 border-t-4 border-r-4 border-green-500"></div>
+                                      <div className="absolute bottom-0 left-0 h-8 w-8 border-b-4 border-l-4 border-green-500"></div>
+                                      <div className="absolute right-0 bottom-0 h-8 w-8 border-r-4 border-b-4 border-green-500"></div>
+                                  </div>
+                                  <div className="absolute right-0 bottom-4 left-0 text-center">
+                                      <p className="bg-opacity-50 inline-block rounded-lg bg-black px-4 py-2 text-sm text-white">
+                                          Scanning for QR code...
+                                      </p>
+                                  </div>
+                              </div>
+                          )}
+                      </div>
+                  </div>
+                  <div className="flex justify-end">
+                      <Button variant="outline" onClick={stopCamera}>
+                          Cancel
+                      </Button>
+                  </div>
+              </DialogContent>
+          </Dialog>
+
+          {/* Completed Card Detail Dialog */}
+          <Dialog
+              open={!!selectedCompletedCard}
+              onOpenChange={() => setSelectedCompletedCard(null)}
+          >
+              <DialogContent className="max-h-[80vh] overflow-y-auto sm:max-w-2xl">
+                  <DialogHeader>
+                      <DialogTitle className="flex items-center gap-2">
+                          <Trophy className="h-5 w-5 text-yellow-500" />
+                          Completed Card Details
+                      </DialogTitle>
+                  </DialogHeader>
+                  {selectedCompletedCard && (
+                      <div className="space-y-4">
+                          <div className="grid grid-cols-2 gap-4 rounded-lg bg-gray-50 p-4">
+                              <div>
+                                  <p className="text-sm text-gray-500">
+                                      Loyalty Card
+                                  </p>
+                                  <p className="font-semibold">
+                                      {selectedCompletedCard.loyalty_card_name}
+                                  </p>
+                              </div>
+                              <div>
+                                  <p className="text-sm text-gray-500">
+                                      Cycle Number
+                                  </p>
+                                  <p className="font-semibold">
+                                      #{selectedCompletedCard.card_cycle}
+                                  </p>
+                              </div>
+                              <div>
+                                  <p className="text-sm text-gray-500">
+                                      Stamps Collected
+                                  </p>
+                                  <p className="font-semibold">
+                                      {selectedCompletedCard.stamps_collected}
+                                  </p>
+                              </div>
+                              <div>
+                                  <p className="text-sm text-gray-500">
+                                      Completed On
+                                  </p>
+                                  <p className="font-semibold">
+                                      {formatCompletedDate(
+                                          selectedCompletedCard.completed_at,
+                                      )}
+                                  </p>
+                              </div>
+                          </div>
+
+                          <div>
+                              <h4 className="mb-3 font-semibold">
+                                  Stamp History
+                              </h4>
+                              <div className="max-h-60 space-y-2 overflow-y-auto">
+                                  {JSON.parse(
+                                      selectedCompletedCard.stamps_data,
+                                  ).map((stamp, i) => (
+                                      <div
+                                          key={i}
+                                          className="flex items-center justify-between rounded bg-gray-50 p-2 text-sm"
+                                      >
+                                          <span className="font-mono text-gray-600">
+                                              {stamp.code}
+                                          </span>
+                                          <span className="text-xs text-gray-500">
+                                              {formatDate(stamp.used_at)}
+                                          </span>
+                                      </div>
+                                  ))}
+                              </div>
+                          </div>
+                      </div>
+                  )}
+              </DialogContent>
+          </Dialog>
+      </div>
   );
 }
