@@ -1149,7 +1149,6 @@ useEffect(() => {
                                               currentCard.backgroundColor,
                                           backgroundImage: backgroundImageUrl
                                               ? getMainDomain() +
-                                                '/' +
                                                 backgroundImageUrl
                                               : 'none',
                                           backgroundSize: 'cover',
