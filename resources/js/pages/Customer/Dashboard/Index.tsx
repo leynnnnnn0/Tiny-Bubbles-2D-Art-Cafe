@@ -333,7 +333,7 @@ const handleScanQR = async () => {
     controlsRef.current = controls;
     
   } catch (err) {
-    console.error('Camera error:', err);
+
     
     // More specific error messages
     if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
@@ -356,7 +356,7 @@ const handleScanQR = async () => {
     try {
       controlsRef.current.stop();
     } catch (error) {
-      console.error('Error stopping controls:', error);
+      
     }
     controlsRef.current = null;
   }
@@ -436,7 +436,7 @@ useEffect(() => {
       stampImageUrl = getMainDomain() + `/${stampImage}`;
     }
 
-    console.log(stampImageUrl);
+
     
 
     const shapes: Record<string, JSX.Element> = {
@@ -669,7 +669,7 @@ useEffect(() => {
 
   const logoUrl = currentCard?.logo ? `/${currentCard.logo}` : null;
   const backgroundImageUrl = currentCard?.backgroundImage ? `/${currentCard.backgroundImage}` : null;
-  console.log(getMainDomain() + backgroundImageUrl);
+
 
   if (!cardTemplates || cardTemplates.length === 0) {
     return (
