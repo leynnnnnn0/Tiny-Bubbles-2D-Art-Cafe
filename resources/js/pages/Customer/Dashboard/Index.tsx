@@ -429,14 +429,14 @@ useEffect(() => {
   }) => {
     const fillColor = isFilled ? (currentCard.stampFilledColor || color) : currentCard.stampEmptyColor;
     const strokeColor = isFilled ? '#FFFFFF' : '#D1D5DB';
-    let stampImageUrl = currentCard.stampImage ? `/${currentCard.stampImage}` : null;
+    let stampImageUrl = currentCard.stampImage ? getMainDomain() + `/${currentCard.stampImage}` : null;
 
 
     if(stampImage){
       stampImageUrl = getMainDomain() + `/${stampImage}`;
     }
 
-    console.log("STAMP IMAGE URL:", stampImageUrl);
+    console.log(stampImageUrl);
     
 
     const shapes: Record<string, JSX.Element> = {
