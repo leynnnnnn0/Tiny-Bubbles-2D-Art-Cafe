@@ -302,7 +302,7 @@ export default function Welcome() {
                             <h2 className="font-serif text-5xl md:text-6xl">
                                 Simple Steps. <br />
                                 <span className="text-gray-400">
-                                    Endless Perks.
+                                    Endless Perks for you.
                                 </span>
                             </h2>
                         </div>
