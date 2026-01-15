@@ -34,30 +34,37 @@ export default function Login({ business, status, isDemo }: LoginProps) {
     return (
         <>
             <Head title="Customer Login" />
-            
-            <div className="min-h-screen flex items-center justify-center p-4">
+
+            <div className="flex min-h-screen items-center justify-center p-4">
                 <Card className="w-full max-w-md shadow-xl">
                     <CardHeader className="space-y-3">
-                        <div className="flex items-center justify-center mb-2">
+                        <div className="mb-2 flex items-center justify-center">
                             {business?.logo ? (
-                                <img 
-                                    src={business.logo} 
+                                <img
+                                    src={business.logo}
                                     alt={business.name}
                                     className="h-16 w-auto"
                                 />
                             ) : (
-                               <a href="/">
-                                 <img src={LOGO} alt="business logo" className='w-32 h-12'/>
-                               </a>
+                                <a href="/">
+                                    <img
+                                        src={LOGO}
+                                        alt="business logo"
+                                        className="h-12 w-32"
+                                    />
+                                </a>
                             )}
                         </div>
-                        <CardTitle className="text-2xl font-bold text-center">
+                        <CardTitle className="text-center text-2xl font-bold">
                             Welcome Back
                         </CardTitle>
                         <CardDescription className="text-center text-base">
                             {business ? (
                                 <span className="flex items-center justify-center gap-2">
-                                    Logging in to <span className="font-semibold text-foreground">{business.name}</span>
+                                    Logging in to{' '}
+                                    <span className="font-semibold text-foreground">
+                                        {business.name}
+                                    </span>
                                 </span>
                             ) : (
                                 'Sign in to your customer account'
@@ -69,19 +76,26 @@ export default function Login({ business, status, isDemo }: LoginProps) {
                         <CardContent className="space-y-4">
                             {status && (
                                 <Alert>
-                                    <AlertDescription>{status}</AlertDescription>
+                                    <AlertDescription>
+                                        {status}
+                                    </AlertDescription>
                                 </Alert>
                             )}
 
                             {errors.email && (
                                 <Alert variant="destructive">
                                     <AlertCircle className="h-4 w-4" />
-                                    <AlertDescription>{errors.email}</AlertDescription>
+                                    <AlertDescription>
+                                        {errors.email}
+                                    </AlertDescription>
                                 </Alert>
                             )}
 
                             <div className="space-y-2">
-                                <Label htmlFor="email" className="flex items-center gap-2">
+                                <Label
+                                    htmlFor="email"
+                                    className="flex items-center gap-2"
+                                >
                                     <Mail className="h-4 w-4" />
                                     Email Address
                                 </Label>
@@ -89,7 +103,9 @@ export default function Login({ business, status, isDemo }: LoginProps) {
                                     id="email"
                                     type="email"
                                     value={data.email}
-                                    onChange={(e) => setData('email', e.target.value)}
+                                    onChange={(e) =>
+                                        setData('email', e.target.value)
+                                    }
                                     placeholder="customer@example.com"
                                     required
                                     autoFocus
@@ -98,7 +114,10 @@ export default function Login({ business, status, isDemo }: LoginProps) {
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="password" className="flex items-center gap-2">
+                                <Label
+                                    htmlFor="password"
+                                    className="flex items-center gap-2"
+                                >
                                     <Lock className="h-4 w-4" />
                                     Password
                                 </Label>
@@ -106,12 +125,13 @@ export default function Login({ business, status, isDemo }: LoginProps) {
                                     id="password"
                                     type="password"
                                     value={data.password}
-                                    onChange={(e) => setData('password', e.target.value)}
+                                    onChange={(e) =>
+                                        setData('password', e.target.value)
+                                    }
                                     placeholder="••••••••"
                                     required
                                     className="h-11"
                                 />
-                      
                             </div>
 
                             <div className="flex items-center space-x-2">
@@ -119,35 +139,44 @@ export default function Login({ business, status, isDemo }: LoginProps) {
                                     id="remember"
                                     type="checkbox"
                                     checked={data.remember}
-                                    onChange={(e) => setData('remember', e.target.checked)}
-                                    className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 bg-white"
+                                    onChange={(e) =>
+                                        setData('remember', e.target.checked)
+                                    }
+                                    className="h-4 w-4 rounded border-gray-300 bg-white text-blue-600 focus:ring-blue-500"
                                 />
-                                <Label 
-                                    htmlFor="remember" 
-                                    className="text-sm font-normal cursor-pointer"
+                                <Label
+                                    htmlFor="remember"
+                                    className="cursor-pointer text-sm font-normal"
                                 >
                                     Remember me
                                 </Label>
                             </div>
                         </CardContent>
 
-                        <CardFooter className="flex flex-col space-y-4 mt-5">
-                            <Button 
-                                type="submit" 
-                                className="w-full h-11 text-base bg-accent hover:bg-accent/70"
+                        <CardFooter className="mt-5 flex flex-col space-y-4">
+                            <Button
+                                type="submit"
+                                className="h-11 w-full bg-accent text-base hover:bg-accent/70"
                                 disabled={processing}
                             >
                                 {processing ? 'Signing in...' : 'Sign In'}
                             </Button>
 
-                            <span className="text-black text-xs">Don't have an acccount? Scan the QR of your favorite store</span>
-                                      <Link 
-    href="/customer/forgot-password"
-    className="text-sm text-primary hover:underline"
->
-    Forgot your password?
-</Link>
-
+                            <span className="text-xs text-black">
+                                Don't have an acccount?{' '}
+                                <a
+                                    className="underline"
+                                    href="/customer/register?business=rAnsAxjUmHVWbNjGkPzeT2HHW6dLL2Lr"
+                                >
+                                    Register Here
+                                </a>
+                            </span>
+                            <Link
+                                href="/customer/forgot-password"
+                                className="text-sm text-primary hover:underline"
+                            >
+                                Forgot your password?
+                            </Link>
                         </CardFooter>
                     </form>
                 </Card>
