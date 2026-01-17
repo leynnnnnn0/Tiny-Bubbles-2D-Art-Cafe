@@ -46,20 +46,20 @@ export default function Welcome() {
 
                 {/* Primary Meta Tags */}
                 <title>
-                    Tiny Bubbles 2D Art Cafe - Coffee, Tea & Meals | Cagayan de
-                    Oro's First 2D Cafe
+                    Tiny Bubbles Loyalty Program - Digital Stamp Card & Rewards
+                    | 2D Cafe CDO
                 </title>
                 <meta
                     name="title"
-                    content="Tiny Bubbles 2D Art Cafe - Coffee, Tea & Meals | Cagayan de Oro"
+                    content="Tiny Bubbles Digital Loyalty Card - Coffee Stamp Rewards Program Cagayan de Oro"
                 />
                 <meta
                     name="description"
-                    content="Experience the magic of Cagayan de Oro's first 2D art cafe! Tiny Bubbles offers specialty coffee, bubble tea, and delicious meals in a unique cartoon-style setting. Est. 2018. Open daily in CDO."
+                    content="Join Tiny Bubbles digital loyalty program! Earn stamps with every purchase at CDO's first 2D art cafe. Get free drinks with our stamp card rewards system. No physical card needed - scan QR code to collect stamps and redeem rewards instantly."
                 />
                 <meta
                     name="keywords"
-                    content="2D cafe Cagayan de Oro, Tiny Bubbles Tea Room, coffee shop CDO, bubble tea Cagayan de Oro, aesthetic cafe Philippines, 2D art cafe, instagrammable cafe CDO, specialty coffee CDO, milk tea Cagayan de Oro, unique cafe Philippines"
+                    content="Tiny Bubbles loyalty card, Tiny Bubbles stamp card, Tiny Bubbles rewards program, digital loyalty card CDO, coffee stamp card Cagayan de Oro, cafe loyalty program Philippines, stamp card rewards CDO, Tiny Bubbles digital stamps, coffee rewards Cagayan de Oro, bubble tea loyalty card, 2D cafe rewards, Tiny Bubbles perks, cafe stamp system CDO, loyalty rewards program, digital punch card cafe, Tiny Bubbles Tea Room loyalty, free coffee rewards CDO, customer loyalty program cafe, stamp collection rewards, QR code loyalty card"
                 />
 
                 {/* Canonical URL */}
@@ -76,11 +76,11 @@ export default function Welcome() {
                 />
                 <meta
                     property="og:title"
-                    content="Tiny Bubbles 2D Art Cafe - The First 2D Cafe in Cagayan de Oro"
+                    content="Tiny Bubbles Digital Loyalty Card - Earn Stamps, Get Free Rewards"
                 />
                 <meta
                     property="og:description"
-                    content="Step into a cartoon world! Cagayan de Oro's first and only 2D art cafe serving specialty coffee, bubble tea, and delicious meals. Join our loyalty program and earn rewards with every visit."
+                    content="Join our digital stamp card program at Tiny Bubbles 2D Art Cafe! Collect stamps with every purchase and unlock free drinks and exclusive rewards. Scan, earn, redeem - it's that easy!"
                 />
                 <meta
                     property="og:image"
@@ -88,7 +88,7 @@ export default function Welcome() {
                 />
                 <meta
                     property="og:site_name"
-                    content="Tiny Bubbles 2D Art Cafe"
+                    content="Tiny Bubbles 2D Art Cafe - Loyalty Rewards Program"
                 />
                 <meta property="og:locale" content="en_PH" />
 
@@ -100,11 +100,11 @@ export default function Welcome() {
                 />
                 <meta
                     name="twitter:title"
-                    content="Tiny Bubbles 2D Art Cafe - CDO's First 2D Cafe"
+                    content="Tiny Bubbles Digital Stamp Card - Coffee Loyalty Rewards"
                 />
                 <meta
                     name="twitter:description"
-                    content="Experience Cagayan de Oro's first 2D art cafe! Specialty coffee, bubble tea & meals in a unique cartoon setting. Est. 2018."
+                    content="Earn stamps with every visit! Join Tiny Bubbles digital loyalty program at CDO's first 2D cafe. Collect stamps, unlock free drinks and exclusive rewards."
                 />
                 <meta
                     name="twitter:image"
@@ -121,7 +121,7 @@ export default function Welcome() {
                 <meta name="geo.position" content="8.4542;124.6319" />
                 <meta name="ICBM" content="8.4542, 124.6319" />
 
-                {/* Structured Data - Local Business */}
+                {/* Structured Data - Local Business with Loyalty Program */}
                 <script type="application/ld+json">
                     {JSON.stringify({
                         '@context': 'https://schema.org',
@@ -135,7 +135,7 @@ export default function Welcome() {
                         foundingDate: '2018',
                         address: {
                             '@type': 'PostalAddress',
-                            streetAddress: 'Cagayan de Oro City!',
+                            streetAddress: 'Cagayan de Oro City',
                             addressLocality: 'Cagayan de Oro City',
                             addressRegion: 'Misamis Oriental',
                             postalCode: '9000',
@@ -173,7 +173,22 @@ export default function Welcome() {
                         ],
                         acceptsReservations: 'False',
                         description:
-                            'The first 2D art cafe in Cagayan de Oro City offering specialty coffee, bubble tea, and delicious meals in a unique cartoon-style atmosphere. Established in 2018.',
+                            'The first 2D art cafe in Cagayan de Oro City offering specialty coffee, bubble tea, and delicious meals in a unique cartoon-style atmosphere. Join our digital loyalty program - earn stamps with every purchase and get free rewards! Scan our QR code to start collecting stamps today.',
+                        hasOfferCatalog: {
+                            '@type': 'OfferCatalog',
+                            name: 'Loyalty Rewards Program',
+                            itemListElement: [
+                                {
+                                    '@type': 'Offer',
+                                    itemOffered: {
+                                        '@type': 'Service',
+                                        name: 'Digital Stamp Card Loyalty Program',
+                                        description:
+                                            'Earn stamps with every purchase and redeem for free drinks and exclusive rewards',
+                                    },
+                                },
+                            ],
+                        },
                     })}
                 </script>
 
@@ -197,6 +212,37 @@ export default function Welcome() {
                             'https://www.facebook.com/tinybubblestearoom',
                             'https://www.instagram.com/tinybubblestearoom',
                         ],
+                    })}
+                </script>
+
+                {/* Structured Data - Loyalty Program */}
+                <script type="application/ld+json">
+                    {JSON.stringify({
+                        '@context': 'https://schema.org',
+                        '@type': 'LoyaltyProgram',
+                        name: 'Tiny Bubbles Digital Stamp Card',
+                        description:
+                            'Digital loyalty rewards program where customers earn stamps with every purchase and redeem for free drinks and exclusive perks at Tiny Bubbles 2D Art Cafe',
+                        programType: 'Stamp Card Rewards',
+                        provider: {
+                            '@type': 'Organization',
+                            name: 'Tiny Bubbles Tea Room',
+                        },
+                        hasOfferCatalog: {
+                            '@type': 'OfferCatalog',
+                            name: 'Stamp Rewards',
+                            itemListElement: [
+                                {
+                                    '@type': 'Offer',
+                                    itemOffered: {
+                                        '@type': 'Product',
+                                        name: 'Free Beverage Reward',
+                                        description:
+                                            'Earn stamps and redeem for free drinks',
+                                    },
+                                },
+                            ],
+                        },
                     })}
                 </script>
             </Head>
