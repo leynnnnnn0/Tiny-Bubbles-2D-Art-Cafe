@@ -83,17 +83,7 @@ export default function Register({
                         <CardTitle className="text-center text-2xl font-bold">
                             Create an Account
                         </CardTitle>
-                        <CardDescription className="text-center text-base">
-                            {selectedBusiness ? (
-                                <span className="flex items-center justify-center gap-2">
-                                    Registering for{' '}
-                                    <span className="font-semibold text-foreground">
-                                        {selectedBusiness.name}
-                                    </span>
-                                </span>
-                            ) : (
-                                'Sign up to get started'
-                            )}
+                        <CardDescription className="text-center text-base">Sign up to get started  
                         </CardDescription>
                     </CardHeader>
 
